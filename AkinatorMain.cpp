@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <locale.h>
 
 #include "TreeMemStruct/Tree.h"
 #include "color_print.h"
@@ -11,32 +12,73 @@ const int START_LENGTH = 1 << 2;
 
 typedef enum
 {
-    AKINATOR_OK = 1 << 0
+    AKINATOR_OK = 1 << 0,
+    MODES_NUM_ERR = 1 << 1
 } AkinatorErr_t;
 
 typedef enum
 {
-    DEFINITION = 1,
-    COMPARISON = 2,
-    UPDATE     = 3,
-    GUESSING   = 4,
-    END        = 5
+    DEFINITION = 0,
+    COMPARISON = 1,
+    UPDATE     = 2,
+    GUESSING   = 3,
+    END        = 4,
+    ADD_NODE   = 5,
+    YES        = 6,
+    NO         = 7,
+    UNKNOWN    = 8
 } AkinatorMode_t;
 
-char* GetUserAns(char* buffer);
+typedef struct
+{
+    AkinatorMode_t num;
+    const char* name;
+    unsigned long int hash;
+}mode_s;
+
+mode_s ModeStructArr[] =
+{
+    {DEFINITION, "определение\n",   0},
+    {COMPARISON, "сравнить\n",      0},
+    {UPDATE,     "обновить\n",      0},
+    {GUESSING,   "отгадывание\n",   0},
+    {END,        "закончить\n",     0},
+    {ADD_NODE,   "добавить узел\n", 0},
+    {YES,        "да\n",            0},
+    {NO,         "нет\n",           0},
+    {UNKNOWN,    "UNKNOWN_CODE\n",  0}
+};
+
+size_t MODES_NUM = sizeof(ModeStructArr)/sizeof(ModeStructArr[0]);
+
+AkinatorErr_t CheckModesNum(void);
+void MakeHashes(void);
+int FindEqualsHash(void);
+void PrintModeStructArr(void);
+unsigned long int DGB2Hash(const char* str);
+
 int HelloUser(void);
+char* GetUserAns(char* buffer);
+AkinatorMode_t AnalyzeUserAns(const char* buffer);
 
 #ifdef DEBUG
     #define ON_DEBUG(func) func
+    #define DEBUG_OF(func)
 #else
     #define ON_DEBUG(func)
+    #define DEBUG_OF(func) func
 #endif
 
 int main()
 {
-    if (HelloUser() <= 0) { printf(RED_COLOR "FATAL ERROR IN FUNCTION int HelloUser(void)\n" RESET); return 0;}
+    if (CheckModesNum() != AKINATOR_OK) {printf(RED_COLOR "MODES NUM ERROR\n" RESET); return 1;}
+    MakeHashes();
+    if (FindEqualsHash()) {printf(RED_COLOR "YOU HAVE EQUALS HASHES\n" RESET); return 1;}
+    ON_DEBUG(PrintModeStructArr());
 
-    AkinatorMode_t AM = END;
+    if (HelloUser() <= 0) { printf(RED_COLOR "FATAL ERROR IN FUNCTION int HelloUser(void)\n" RESET); return 1;}
+
+    AkinatorMode_t mode = UNKNOWN;
     do
     {
         char* UserAns = (char*) calloc(START_LENGTH, sizeof(char));
@@ -45,13 +87,106 @@ int main()
         UserAns = GetUserAns(UserAns);
         if (UserAns == NULL) {printf(RED_COLOR "ERR IN FUNC char* GetUserAns(char* buffer)\n"); free(UserAns); UserAns = NULL; return 1;}
 
-        
+        mode = AnalyzeUserAns(UserAns);
+        if (mode == UNKNOWN)
+        {
+            printf(RED_COLOR "Не зли меня, формулируй свои запросы правильно, вселенная очень капризна и не отвечает на что попало\n\n\t\t" RESET);
+            continue;
+        }
 
         free(UserAns);
         UserAns = NULL;
-    } while (AM != END);
+    } while (mode != END);
 
     return 0;
+}
+
+
+void PrintModeStructArr(void)
+{
+    printf("[ i] |  num | name                      hash               |\n");
+
+    for (size_t i = 0; i < MODES_NUM; i++)
+    {
+        printf("[%2zu] | %4d | %-30s  %20zu |\n", i, ModeStructArr[i].num, ModeStructArr[i].name, ModeStructArr[i].hash);
+    }
+}
+
+
+int FindEqualsHash(void)
+{
+    int status = 0;
+
+    for (size_t i = 0; i < MODES_NUM; i++)
+    {
+        for(size_t j = i + 1; j < MODES_NUM; j++)
+        {
+            if (ModeStructArr[i].hash == ModeStructArr[j].hash)
+            {
+                printf(CHANGE_ON RED TEXT_COLOR "You have equal hashes for commands:\n"
+                                                "%10s ---> hash = %zu\n"
+                                                "%10s ---> hash = %zu\n" RESET,
+                                                ModeStructArr[i].name, ModeStructArr[i].hash,
+                                                ModeStructArr[j].name, ModeStructArr[j].hash);
+                status |= 1;
+            }
+        }
+    }
+
+    return status;
+}
+
+
+unsigned long int DGB2Hash(const char* str)
+{
+    unsigned long int hash = 5381;
+
+    unsigned char c;
+
+    while ((c = (unsigned char) *str++)) {
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    }
+
+    return hash;
+}
+
+
+void MakeHashes(void)
+{
+    for (size_t i = 0; i < MODES_NUM; i++)
+    {
+        ModeStructArr[i].hash = DGB2Hash(ModeStructArr[i].name);
+    }
+}
+
+
+AkinatorErr_t CheckModesNum(void)
+{
+    AkinatorErr_t STATUS = AKINATOR_OK;
+    for (size_t i = 0; i < MODES_NUM; i++) {
+        if (ModeStructArr[i].num != i) {
+            printf( RED_COLOR "!!!ERROR!!! номера команд не соответствуют их позиции в массиве структур\n" RESET
+                              "Ошибка произошла в команде %s\n"
+                    RED_COLOR "Сейчас:      номер команды %d        позиция в массиве структур %zu\n" RESET
+                  GREEN_COLOR "Должно быть: номер команды %d        позиция в массиве структур %d\n" RESET,
+                              ModeStructArr[i].name, ModeStructArr[i].num, i, ModeStructArr[i].num, ModeStructArr[i].num);
+            STATUS = MODES_NUM_ERR;
+        }
+    }
+
+    return STATUS;
+}
+
+
+AkinatorMode_t AnalyzeUserAns(const char* buffer)
+{
+    AkinatorMode_t mode = UNKNOWN;
+
+    size_t ans_hash = DGB2Hash(buffer);
+    ON_DEBUG(printf("\tanswer's hash = %zu\n", ans_hash););
+    if (ans_hash == ModeStructArr[END].hash) return END;
+
+    return mode;
 }
 
 
@@ -114,46 +249,48 @@ int HelloUser(void)
 
     #define PRINT return_value+= printf
 
-    #ifdef _WIN32
-        system("cls");
-    #elif defined(__linux__)
-        system("clear");
-    #else
-        printf("О путник, на тебе лежит злое проклятие лорда маковода, прости ,но я не могу тебе ничем помочь, уходи...\n");
+    #ifndef DEBUG
+        #ifdef _WIN32
+            system("cls");
+        #elif defined(__linux__)
+            system("clear");
+        #else
+            printf("О путник, на тебе лежит злое проклятие лорда маковода, прости ,но я не могу тебе ничем помочь, уходи...\n");
+        #endif
     #endif
 
     int return_value = printf("Добро пожаловать , о путник, страждущий знаний...\n");
-    usleep(2 * SECOND);
+    DEBUG_OF(usleep(2 * SECOND);)
     PRINT("Ты попал ко мне - всезнающему(ну почти), великому(не ну еще не на столько)\n\n");
-    usleep(2.5 * SECOND);
+    DEBUG_OF(usleep(2.5 * SECOND);)
     PRINT(RED_COLOR "                            АКИНАТОРУ                                     \n\n" RESET);
-    usleep(4 * SECOND);
+    DEBUG_OF(usleep(4 * SECOND);)
     PRINT("Со мной ты можешь сделать то, что обычному человеку не подвластно, а именно:\n\n");
-    usleep(1.5 * SECOND);
+    DEBUG_OF(usleep(1.5 * SECOND);)
     PRINT("-- " CYAN_COLOR "дать определение" RESET ", любому предмету, существу или явлению (которое я знаю) "
           "------------ " GREEN_COLOR  "[определение]\n" RESET);
     PRINT("-- " CYAN_COLOR  "найти общее" RESET " между двумя предметами и то, чем они отличаются "
           "------------------------- " GREEN_COLOR "[сравнить]\n" RESET);
     PRINT("-- " CYAN_COLOR "уничтожить все" RESET ", что я знаю и начать с начала вместе с тобой (не надо пожалуйста) "
           "---- " GREEN_COLOR "[обновить]\n\n" RESET);
-    usleep(8 * SECOND);
+    DEBUG_OF(usleep(8 * SECOND);)
     PRINT("Но самое главное, то ,благодаря чему я стал настолько известным и великим --");
-    usleep(2 * SECOND);
+    DEBUG_OF(usleep(2 * SECOND);)
     PRINT(" я могу " CYAN_COLOR "прочитать твои мысли" RESET ",\n"
           "узнать, что же творится в твоей голове "
           "----------- " GREEN_COLOR "[отгадывание]\n\n" RESET);
-    usleep(4 * SECOND);
+    DEBUG_OF(usleep(4 * SECOND);)
     PRINT(PURPLE_COLOR "Готов ли ты окунуться со мной в удивительный мир знаний и ясновидения???\n\n" RESET);
-    usleep(5 * SECOND);
+    DEBUG_OF(usleep(5 * SECOND);)
     PRINT("Если да , то скорее выбирай чем мы будем заниматься " GREEN_COLOR "[определение] [сравнить] "
                                                                              "[обновить] [отгадывание]\n\n" RESET);
-    usleep(3 * SECOND);
+    DEBUG_OF(usleep(3 * SECOND);)
     PRINT("Если же ты еще не готов ко моей силе, то можешь пока проститься со мной "
           GREEN_COLOR "[закончить]\n" RESET);
-    usleep(3 * SECOND);
+    DEBUG_OF(usleep(3 * SECOND);)
     PRINT("(Но помни, я всегда рядом и ты можешь вернуться к моим необъятным познаниям... )\n\n");
-    usleep(3 * SECOND);
-    PRINT("Скорее дай мне знать, чего ты хочешь:\n""\t\t");
+    DEBUG_OF(usleep(3 * SECOND);)
+    PRINT("Скорее дай мне знать, чего ты хочешь:\n\n""\t\t");
 
     return return_value;
 }
