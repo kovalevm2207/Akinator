@@ -31,8 +31,8 @@ endif
 
 TREE_DIR = TreeMemStruct
 
-all: $(TREE_DIR)/Tree.o AkinatorMain.o $(TREE_DIR)/TreeDump.o
-	@ g++ $(FLAGS) $(MODE) $(TREE_DIR)/Tree.o AkinatorMain.o $(TREE_DIR)/TreeDump.o -o akinator
+all: $(TREE_DIR)/Tree.o AkinatorMain.o $(TREE_DIR)/TreeDump.o DGB2.o OUT.o
+	@ g++ $(FLAGS) $(MODE) $(TREE_DIR)/Tree.o AkinatorMain.o DGB2.o OUT.o $(TREE_DIR)/TreeDump.o -o akinator
 
 $(TREE_DIR)/Tree.o: $(TREE_DIR)/Tree.cpp $(TREE_DIR)/Tree.h $(TREE_DIR)/TreeBase.h
 	@ g++ $(FLAGS) $(MODE) -c $(TREE_DIR)/Tree.cpp -o $(TREE_DIR)/Tree.o
@@ -40,8 +40,14 @@ $(TREE_DIR)/Tree.o: $(TREE_DIR)/Tree.cpp $(TREE_DIR)/Tree.h $(TREE_DIR)/TreeBase
 $(TREE_DIR)/TreeDump.o: $(TREE_DIR)/TreeDump.cpp $(TREE_DIR)/TreeDump.h $(TREE_DIR)/Tree.h $(TREE_DIR)/TreeBase.h
 	@ g++ $(FLAGS) $(MODE) -c $(TREE_DIR)/TreeDump.cpp -o $(TREE_DIR)/TreeDump.o
 
-AkinatorMain.o: AkinatorMain.cpp $(TREE_DIR)/Tree.h
+AkinatorMain.o: AkinatorMain.cpp $(TREE_DIR)/Tree.h Akinator.h my_DGB2_hash.h OutFunctions.h
 	@ g++ $(FLAGS) $(MODE) -c AkinatorMain.cpp -o AkinatorMain.o
+
+DGB2.o: my_DGB2_hash.cpp my_DGB2_hash.h AkinatorTypes.h
+	@ g++ $(FLAGS) $(MODE) -c my_DGB2_hash.cpp -o DGB2.o
+
+OUT.o: OutFunctions.cpp OutFunctions.h AkinatorTypes.h
+	@ g++ $(FLAGS) $(MODE) -c OutFunctions.cpp -o OUT.o
 
 clean:
 	rm *.o $(TREE_DIR)/*.o akinator
