@@ -3,11 +3,13 @@
 
 int main()
 {
-    //int count_img = 1;
+    int count_img = 1;
     hash_s hashes[MODES_NUM] = {};
 
     if (WorkWithHashes(hashes)) return 1;
     HelloUser();
+
+    if (StartHTMLfile() == NULL) return 1;
 
     Node_t* root = TreeNodeCtor("ROOT", NULL, NULL);
     if(!root) {printf(RED_COLOR "ROOT CALLOC ERR\n"); return 1;}
@@ -23,12 +25,13 @@ int main()
         mode = AnalyzeUserAns(UserAns, hashes);
         if (mode == UNKNOWN) { PrintIncorrectAns(); free(UserAns); UserAns = NULL;
                                                     continue;}
-        //DoMode(mode);
+        AkinatorErr_t status = DoMode(mode, root, &count_img);
 
         free(UserAns);
         UserAns = NULL;
     } while (mode != END);
 
+    if (EndHTMLfile() != 0) return 1;
     DeleteTreeNode(root);
 
     return 0;
@@ -96,6 +99,16 @@ int BsearchCompareFunc(const void* searching_elem, const void* cur_elem)
     if (*searching_elem_ > cur_elem_->hash) return  1;
 
     return 0;
+}
+
+
+AkinatorErr_t DoMode(AkinatorMode_t mode, Node_t* root, int* count_img)
+{
+    if (mode > 0 && mode <= UNKNOWN)
+    {
+        return ModeStructArr[mode].func(root, count_img);
+    }
+    else return INCORRECT_MODE;
 }
 
 

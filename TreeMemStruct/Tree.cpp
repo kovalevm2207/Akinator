@@ -127,13 +127,10 @@ TreeErr_t TreeDump_(const Node_t* node, int count_img, const char* func, const c
 
     CreateDotFile(node);
     char command[MAX_FILE_NAME];
-    sprintf(command, "dot -Tsvg svg_dot/dump.dot -o svg_dot/%ddump.svg", count_img);
+    sprintf(command, "dot -Tsvg TreeMemStruct/svg_dot/dump.dot -o TreeMemStruct/svg_dot/%ddump.svg", count_img);
     system(command);
 
-    if (StartHTMLfile() == NULL) return NULL_FILE;
     WriteInHtmlFile(node, count_img, func, file, line);
-
-    if (EndHTMLfile() != 0) return END_FILE_ERR;
 
     return TREE_OK;
 }

@@ -64,3 +64,14 @@ void PrintIncorrectAns(void)
              "                                                       [обновить] [отгадывание]\n"
              "                                                       [закончить]\n\n\t\t" RESET);
 }
+
+
+void ShowTreePrint(void)
+{
+      printf("Вы можете посмотреть текущее древо знаний , открыв файл dump.html\n");
+}
+
+void ErrShowTreePrint(void)
+{
+      printf("");
+}

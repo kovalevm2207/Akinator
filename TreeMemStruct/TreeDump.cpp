@@ -77,7 +77,7 @@ TreeErr_t CreateDotFile(const Node_t* node)
 {
     assert(node != NULL);
 
-    FILE* dump_file = fopen("svg_dot/dump.dot", "w");
+    FILE* dump_file = fopen("TreeMemStruct/svg_dot/dump.dot", "w");
     assert(dump_file != NULL);
 
     fprintf(dump_file, "digraph DUMP\n"
@@ -250,7 +250,7 @@ TreeErr_t WriteInHtmlFile(const Node_t* node, int count_img, const char* func, c
     fprintf(dump_file, "<pre><b>TreeDump from %s at %s:%d\n",
                        func, file, line);
 
-    fprintf(dump_file, "    <img src=\"svg_dot/%ddump.svg\">\n",
+    fprintf(dump_file, "    <img src=\"TreeMemStruct/svg_dot/%ddump.svg\">\n",
                              count_img);
 
     fclose(dump_file);

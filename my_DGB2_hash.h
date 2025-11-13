@@ -1,10 +1,7 @@
 #ifndef MY_DJB2_HASH
 #define MY_DJB2_HASH
-#include <cstddef>    // для size_t
-#include <cstdio>     // для printf
 
 #include "AkinatorTypes.h"
-#include "color_print.h"
 
 int QsortCompareFunc(const void* a, const void* b);
 int FindEqualsHash(const hash_s* hashes);
