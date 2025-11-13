@@ -13,11 +13,12 @@
 #include "OutFunctions.h"
 #include "AkinatorTypes.h"
 
-const int SECOND = 1e6;
 const int START_LENGTH = 1 << 2;
 
-/*unused*/ char* GetUserAns(char* buffer);
+/*unused*/ char* MyGetline(char* buffer);
 
+int WorkWithHashes(hash_s* hashes);
+int GetUserAns(char** UserAns);
 AkinatorMode_t AnalyzeUserAns(const char* buffer, hash_s* hashes);
 int BsearchCompareFunc(const void* searching_elem, const void* cur_elem);
 

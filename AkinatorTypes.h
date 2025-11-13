@@ -32,7 +32,7 @@ typedef struct
     AkinatorMode_t num;
 } hash_s;
 
-const mode_s ModeStructArr[] =   // to do: убрать кринге
+const mode_s ModeStructArr[] =
 {
     {DEFINITION, "определение"  },
     {COMPARISON, "сравнить"     },

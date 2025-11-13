@@ -4,7 +4,33 @@
 int main()
 {
     hash_s hashes[MODES_NUM] = {};
-    // проверять порядок номеров по-моему нет смысла, так как мы все равно сортируем потом
+
+    if (WorkWithHashes(hashes)) return 1;
+    HelloUser();
+
+    AkinatorMode_t mode = UNKNOWN;
+
+    do
+    {
+        char* UserAns = NULL;
+        if (GetUserAns(&UserAns)) return 1;
+        if (UserAns == NULL) {printf(RED_COLOR "ERR IN FUNC char* GetUserAns(char* buffer)\n"); free(UserAns); UserAns = NULL; return 1;}
+
+        mode = AnalyzeUserAns(UserAns, hashes);
+        if (mode == UNKNOWN) { PrintIncorrectAns(); free(UserAns); UserAns = NULL; continue;}
+
+        //DoMode(mode);
+
+        free(UserAns);
+        UserAns = NULL;
+    } while (mode != END);
+
+    return 0;
+}
+
+
+int WorkWithHashes(hash_s* hashes)
+{
     MakeHashes(hashes);
     if (FindEqualsHash(hashes)) {printf(RED_COLOR "YOU HAVE EQUALS HASHES\n" RESET); return 1;}
     ON_DEBUG(printf("Массив с хешами до сортировки:\n"));
@@ -14,43 +40,24 @@ int main()
     ON_DEBUG(printf("Массив с хешами после сортировки:\n"));
     ON_DEBUG(PrintModeStructArr(hashes));
 
-
-    if (HelloUser() <= 0) { printf(RED_COLOR "FATAL ERROR IN FUNCTION int HelloUser(void)\n" RESET); return 1;}
-
-
-    AkinatorMode_t mode = UNKNOWN;
-    do
-    {
-        char* UserAns = NULL;
-
-        #ifdef __linux__
-            size_t size = 0;
-            ssize_t len = 0;
-            if ((len = getline(&UserAns, &size, stdin)) <= 0) {printf(RED_COLOR "getline USER ANSWER ERR\n" RESET); return 1;}
-            UserAns[len - 1] = '\0';
-        #elif defined(_WIN32)
-            // Моя реализация getline() ... зачем ... ааа для windows повезло повезло ))))
-            UserAns = (char*) calloc(START_LENGTH, sizeof(char));
-            if (UserAns == NULL) {printf(RED_COLOR "MEMORY ALLOCATION ERR\n" RESET); return 1;}
-            UserAns = GetUserAns(UserAns);
-            // TXSpeak("a b c d e f g h i j k l m o n");
-        #endif
-
-        if (UserAns == NULL) {printf(RED_COLOR "ERR IN FUNC char* GetUserAns(char* buffer)\n"); free(UserAns); UserAns = NULL; return 1;}
+    return 0;
+}
 
 
-        mode = AnalyzeUserAns(UserAns, hashes);
-        if (mode == UNKNOWN)
-        {
-            printf(RED_COLOR "Не зли меня, формулируй свои запросы правильно, вселенная очень капризна и не отвечает на что попало\n\n\t\t" RESET);
-            free(UserAns);
-            continue;
-        }
-
-
-        free(UserAns);
-        UserAns = NULL;
-    } while (mode != END);
+int GetUserAns(char** UserAns)
+{
+    #ifdef __linux__
+        size_t size = 0;
+        ssize_t len = 0;
+        if ((len = getline(UserAns, &size, stdin)) <= 0) {printf(RED_COLOR "getline USER ANSWER ERR\n" RESET); return 1;}
+        (*UserAns)[len - 1] = '\0';
+    #elif defined(_WIN32)
+        // Моя реализация getline() ... зачем ... ааа для windows повезло повезло)))), хотя вроде getline должен быть в TXLib.h?
+        UserAns = (char*) calloc(START_LENGTH, sizeof(char));
+        if (UserAns == NULL) {printf(RED_COLOR "MEMORY ALLOCATION ERR\n" RESET); return 1;}
+        UserAns = MyGetline(UserAns);
+        // TXSpeak("a b c d e f g h i j k l m o n"); // ну может будет когда-то
+    #endif
 
     return 0;
 }
@@ -67,7 +74,7 @@ AkinatorMode_t AnalyzeUserAns(const char* buffer, hash_s* hashes)
 
     if(cur_mode) mode = cur_mode->num;
 
-    ON_DEBUG(printf("\tfounded mode = %d\n\t", mode);)
+    ON_DEBUG(printf("\tfounded mode = %d\n", mode);)
 
     return mode;
 }
@@ -86,7 +93,7 @@ int BsearchCompareFunc(const void* searching_elem, const void* cur_elem)
 }
 
 
-char* GetUserAns(char* buffer)
+char* MyGetline(char* buffer)
 {
     long unsigned int CUR_LENGTH = START_LENGTH;
     long unsigned int LAST_LENGTH = 0;
