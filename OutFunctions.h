@@ -11,6 +11,7 @@
 const int SECOND = 1e6;
 
 int HelloUser(void);
+void PrintGetlineErr(void);
 void PrintIncorrectAns(void);
 
 #endif

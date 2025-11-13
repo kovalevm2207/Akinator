@@ -9,15 +9,17 @@ typedef enum
 
 typedef enum
 {
-    DEFINITION = 0,
-    COMPARISON = 1,
-    UPDATE     = 2,
-    GUESSING   = 3,
-    END        = 4,
-    ADD_NODE   = 5,
-    YES        = 6,
-    NO         = 7,
-    UNKNOWN    = 8
+    DEFINITION     =  0,
+    COMPARISON     =  1,
+    UPDATE         =  2,
+    GUESSING       =  3,
+    END            =  4,
+    ADD_NODE       =  5,
+    SHOW_TREE      =  6,
+    WRIGHT_IN_FILE =  7,
+    YES            =  8,
+    NO             =  9,
+    UNKNOWN        = 10
 } AkinatorMode_t;
 
 typedef struct
@@ -34,15 +36,17 @@ typedef struct
 
 const mode_s ModeStructArr[] =
 {
-    {DEFINITION, "определение"  },
-    {COMPARISON, "сравнить"     },
-    {UPDATE,     "обновить"     },
-    {GUESSING,   "отгадывание"  },
-    {END,        "закончить"    },
-    {ADD_NODE,   "добавить узел"},
-    {YES,        "да"           },
-    {NO,         "нет"          },
-    {UNKNOWN,    "UNKNOWN_CODE" }
+    {DEFINITION,     "определение"           },
+    {COMPARISON,     "сравнить"              },
+    {UPDATE,         "обновить"              },
+    {GUESSING,       "отгадывание"           },
+    {END,            "закончить"             },
+    {ADD_NODE,       "добавить узел"         },
+    {SHOW_TREE,      "показать древо знаний" },
+    {WRIGHT_IN_FILE, "записать знания в файл"},
+    {YES,            "да"                    },
+    {NO,             "нет"                   },
+    {UNKNOWN,        "UNKNOWN_CODE"          }
 };
 
 const size_t MODES_NUM = sizeof(ModeStructArr)/sizeof(ModeStructArr[0]);

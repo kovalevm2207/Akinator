@@ -3,10 +3,14 @@
 
 int main()
 {
+    //int count_img = 1;
     hash_s hashes[MODES_NUM] = {};
 
     if (WorkWithHashes(hashes)) return 1;
     HelloUser();
+
+    Node_t* root = TreeNodeCtor("ROOT", NULL, NULL);
+    if(!root) {printf(RED_COLOR "ROOT CALLOC ERR\n"); return 1;}
 
     AkinatorMode_t mode = UNKNOWN;
 
@@ -14,11 +18,11 @@ int main()
     {
         char* UserAns = NULL;
         if (GetUserAns(&UserAns)) return 1;
-        if (UserAns == NULL) {printf(RED_COLOR "ERR IN FUNC char* GetUserAns(char* buffer)\n"); free(UserAns); UserAns = NULL; return 1;}
+        if (UserAns == NULL) {PrintGetlineErr(); free(UserAns); UserAns = NULL; continue;}
 
         mode = AnalyzeUserAns(UserAns, hashes);
-        if (mode == UNKNOWN) { PrintIncorrectAns(); free(UserAns); UserAns = NULL; continue;}
-
+        if (mode == UNKNOWN) { PrintIncorrectAns(); free(UserAns); UserAns = NULL;
+                                                    continue;}
         //DoMode(mode);
 
         free(UserAns);

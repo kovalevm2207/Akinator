@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-typedef int Tree_t;
+typedef const char* Tree_t;
 
 typedef struct Node_t
 {

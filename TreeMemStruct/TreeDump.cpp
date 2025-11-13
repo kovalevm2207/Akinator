@@ -38,7 +38,7 @@ TreeErr_t PrintTreeData(const Node_t* node, const char* mode)
 
     (void) mode;
 
-    printf("%d", node->data);
+    printf("%s", node->data);
 
     return TREE_OK;
 }
@@ -145,7 +145,7 @@ void MakeNodes(const Node_t* node, int* node_count, FILE* file)
                         "BGCOLOR=\"#c5a1e6ff\" "
                         "COLSPAN=\"2\" "
                         "COLOR=\"#000000\">"
-                            "%d"
+                            "%s"
                     "</TD></TR>\n",
         *node_count, *node_count, GenerateColor(node), node, node->data
     );
