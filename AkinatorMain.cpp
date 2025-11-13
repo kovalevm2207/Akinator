@@ -29,6 +29,8 @@ int main()
         UserAns = NULL;
     } while (mode != END);
 
+    DeleteTreeNode(root);
+
     return 0;
 }
 
