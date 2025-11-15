@@ -7,7 +7,11 @@ const int SECOND = 1e6;
 
 
 #define PRINT(text) return_value+= printf("%s", text)
-#define SPEAK(text) system("espeak -v ru -s 90 -a 120 -p 50 \"" text "\"")
+#ifndef DEBUG
+    #define SPEAK(text) system("espeak -v ru -s 90 -a 120 -p 50 \"" text "\"")
+#else
+    #define SPEAK(text)
+#endif
 
 int HelloUser(void);
 void PrintGetlineErr(void);

@@ -31,6 +31,7 @@ int main()
         UserAns = NULL;
     } while (mode != END);
 
+    system("pkill chrome");
     if (EndHTMLfile() != 0) return 1;
     DeleteTreeNode(&root);
 

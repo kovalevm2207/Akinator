@@ -97,153 +97,96 @@ AkinatorErr_t UpdateTree(Node_t** root, int* count_img)
 }
 
 
-AkinatorErr_t Guessing(Node_t** root, int* count_img)
+int Confirm(void)
 {
-    (void) count_img;
-
     char* UserAns = NULL;
     unsigned long int ans_hash = 0;
     const unsigned long int yes = DGB2Hash("да"), no = DGB2Hash("нет");
+
+    while (true)
+    {
+        GetUserAns(&UserAns);
+        ans_hash = DGB2Hash(UserAns);
+        free(UserAns);
+        UserAns = NULL;
+
+        if (ans_hash == yes) return true;
+        else if(ans_hash == no) return false;
+        else PrintIncorrectAns();
+    }
+}
+
+
+AkinatorErr_t CreateNewNode(Node_t* cur_node)
+{
+    char* UserAns = NULL;
+
+    PrintQuestionWho();
+    GetUserAns(&UserAns);
+    Node_t* left_object = TreeNodeCtor(UserAns, NULL, NULL);
+    PrintComparisonQuestion(UserAns, cur_node->data);
+    free(UserAns);
+    UserAns = NULL;
+
+    GetUserAns(&UserAns);
+    Node_t* right_object = TreeNodeCtor(cur_node->data, NULL, NULL);
+
+    free(cur_node->data);
+    cur_node->data = NULL;
+    cur_node->data  = strdup(UserAns);
+    free(UserAns);
+    UserAns = NULL;
+
+    TreeInsertLeft (cur_node,  left_object);
+    TreeInsertRight(cur_node, right_object);
+
+    PrintIRemember();
+
+    return AKINATOR_OK;
+}
+
+
+AkinatorErr_t Guessing(Node_t** root, int* count_img)
+{
+    (void) count_img;
+    char* UserAns = NULL;
 
     if (*root == NULL)
     {
         PrintStartTree();
         GetUserAns(&UserAns);
-        Node_t* left = TreeNodeCtor(UserAns, NULL, NULL);
-        free(UserAns);
-        UserAns = NULL;
-
-        PrintSecondStartTree();
-        GetUserAns(&UserAns);
-        Node_t* right = TreeNodeCtor(UserAns, NULL, NULL);
-        free(UserAns);
-        UserAns = NULL;
-
-        PrintComparisonQuestion(left->data, right->data);
-        GetUserAns(&UserAns);
-        *root = TreeNodeCtor(UserAns, left, right);
+        *root = TreeNodeCtor(UserAns, NULL, NULL);
         free(UserAns);
         UserAns = NULL;
 
         PrintIRemember();
-
         PrintContinueQuestion();
-        int correct_ans = 0;
-        while (!correct_ans)
-        {
-            GetUserAns(&UserAns);
-            ans_hash = DGB2Hash(UserAns);
-            free(UserAns);
-            UserAns = NULL;
-
-            if (ans_hash == yes)
-            {
-                correct_ans = 1;
-            }
-            else if(ans_hash == no)
-            {
-                correct_ans = 1;
-                return AKINATOR_OK;
-            }
-            else PrintIncorrectAns();
-        }
+        if (!Confirm()) return AKINATOR_OK;
     }
-
     Node_t* cur_node = *root;
-
     while (cur_node)
     {
         printf("%s?\n\n\t\t", cur_node->data);
-
-        if(GetUserAns(&UserAns)) return GET_ANS_ERR;
-        ans_hash = DGB2Hash(UserAns);
-        free(UserAns);
-        UserAns = NULL;
-
-        if (ans_hash == yes)
+        if (Confirm())
         {
             if (cur_node->left) cur_node =  cur_node->left;
             else
             {
                 PrintSuccess();
                 PrintContinueQuestion();
-                int correct_ans = 0;
-                while (!correct_ans)
-                {
-                    GetUserAns(&UserAns);
-                    ans_hash = DGB2Hash(UserAns);
-                    free(UserAns);
-                    UserAns = NULL;
-
-                    if (ans_hash == yes)
-                    {
-                        correct_ans = 1;
-                        cur_node = *root;
-                    }
-                    else if(ans_hash == no)
-                    {
-                        correct_ans = 1;
-                        return AKINATOR_OK;
-                    }
-                    else PrintIncorrectAns();
-                }
-            }
-        }
-        else if(ans_hash ==  no)
-        {
-            if (cur_node->right) cur_node = cur_node->right;
-            else
-            {
-                PrintQuestionWho();
-                GetUserAns(&UserAns);
-                Node_t* left_object = TreeNodeCtor(UserAns, NULL, NULL);
-
-                PrintComparisonQuestion(UserAns, cur_node->data);
-
-                free(UserAns);
-                UserAns = NULL;
-
-                GetUserAns(&UserAns);
-
-                Node_t* right_object = TreeNodeCtor(cur_node->data, NULL, NULL);
-
-                free(cur_node->data);
-                cur_node->data = NULL;
-                cur_node->data  = strdup(UserAns);
-                free(UserAns);
-                UserAns = NULL;
-
-                TreeInsertLeft (cur_node,  left_object);
-                TreeInsertRight(cur_node, right_object);
-
-                PrintIRemember();
-
-                PrintContinueQuestion();
-                int correct_ans = 0;
-                while (!correct_ans)
-                {
-                    GetUserAns(&UserAns);
-                    ans_hash = DGB2Hash(UserAns);
-                    free(UserAns);
-                    UserAns = NULL;
-
-                    if (ans_hash == yes)
-                    {
-                        correct_ans = 1;
-                        cur_node = *root;
-                    }
-                    else if(ans_hash == no)
-                    {
-                        correct_ans = 1;
-                        return AKINATOR_OK;
-                    }
-                    else PrintIncorrectAns();
-                }
+                if (!Confirm()) return AKINATOR_OK;
+                cur_node = *root;
             }
         }
         else
         {
-            PrintIncorrectAns();
+            if (cur_node->right) cur_node = cur_node->right;
+            else
+            {
+                CreateNewNode(cur_node);
+                PrintContinueQuestion();
+                if (!Confirm()) return AKINATOR_OK;
+            }
         }
     }
 

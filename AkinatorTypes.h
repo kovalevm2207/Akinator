@@ -6,8 +6,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <locale.h>
-#include <cstddef>
-#include <cstdio>
+#include <stdbool.h>
 
 #include "TreeMemStruct/Tree.h"
 #include "color_print.h"
@@ -82,7 +81,10 @@ unsigned long int DGB2Hash(const char* str);
 AkinatorErr_t ShowTree(Node_t** root, int* count_img);
 AkinatorErr_t SayGoodby(Node_t** root, int* count_img);
 AkinatorErr_t UpdateTree(Node_t** root, int* count_img);
+int Confirm(void);
+AkinatorErr_t CreateNewNode(Node_t* cur_node);
 AkinatorErr_t Guessing(Node_t** root, int* count_img);
+
 
 const mode_s ModeStructArr[] =
 {
