@@ -11,8 +11,8 @@ int main()
 
     if (StartHTMLfile() == NULL) return 1;
 
-    Node_t* root = TreeNodeCtor("ROOT", NULL, NULL);
-    if(!root) {printf(RED_COLOR "ROOT CALLOC ERR\n"); return 1;}
+    Node_t* root = NULL;
+    //if(!root) {printf(RED_COLOR "ROOT CALLOC ERR\n"); return 1;}
 
     AkinatorMode_t mode = UNKNOWN;
 
@@ -25,19 +25,19 @@ int main()
         mode = AnalyzeUserAns(UserAns, hashes);
         if (mode == UNKNOWN) { PrintIncorrectAns(); free(UserAns); UserAns = NULL;
                                                     continue;}
-        AkinatorErr_t status = DoMode(mode, root, &count_img);
+        AkinatorErr_t status = DoMode(mode, &root, &count_img);
 
         free(UserAns);
         UserAns = NULL;
     } while (mode != END);
 
     if (EndHTMLfile() != 0) return 1;
-    DeleteTreeNode(root);
+    DeleteTreeNode(&root);
 
     return 0;
 }
 
-
+// sorted
 int WorkWithHashes(hash_s* hashes)
 {
     MakeHashes(hashes);
@@ -48,25 +48,6 @@ int WorkWithHashes(hash_s* hashes)
     ON_DEBUG(printf("\n\n"));
     ON_DEBUG(printf("Массив с хешами после сортировки:\n"));
     ON_DEBUG(PrintModeStructArr(hashes));
-
-    return 0;
-}
-
-
-int GetUserAns(char** UserAns)
-{
-    #ifdef __linux__
-        size_t size = 0;
-        ssize_t len = 0;
-        if ((len = getline(UserAns, &size, stdin)) <= 0) {printf(RED_COLOR "getline USER ANSWER ERR\n" RESET); return 1;}
-        (*UserAns)[len - 1] = '\0';
-    #elif defined(_WIN32)
-        // Моя реализация getline() ... зачем ... ааа для windows повезло повезло)))), хотя вроде getline должен быть в TXLib.h?
-        UserAns = (char*) calloc(START_LENGTH, sizeof(char));
-        if (UserAns == NULL) {printf(RED_COLOR "MEMORY ALLOCATION ERR\n" RESET); return 1;}
-        UserAns = MyGetline(UserAns);
-        // TXSpeak("a b c d e f g h i j k l m o n"); // ну может будет когда-то
-    #endif
 
     return 0;
 }
@@ -102,11 +83,13 @@ int BsearchCompareFunc(const void* searching_elem, const void* cur_elem)
 }
 
 
-AkinatorErr_t DoMode(AkinatorMode_t mode, Node_t* root, int* count_img)
+AkinatorErr_t DoMode(AkinatorMode_t mode, Node_t** root, int* count_img)
 {
     if (mode > 0 && mode <= UNKNOWN)
     {
-        return ModeStructArr[mode].func(root, count_img);
+        AkinatorErr_t status = ModeStructArr[mode].func(root, count_img);
+        if (mode != END) PrintContinue();
+        return status;
     }
     else return INCORRECT_MODE;
 }

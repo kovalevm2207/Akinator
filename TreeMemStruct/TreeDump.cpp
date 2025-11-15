@@ -145,7 +145,7 @@ void MakeNodes(const Node_t* node, int* node_count, FILE* file)
                         "BGCOLOR=\"#c5a1e6ff\" "
                         "COLSPAN=\"2\" "
                         "COLOR=\"#000000\">"
-                            "%s"
+                            "%s "
                     "</TD></TR>\n",
         *node_count, *node_count, GenerateColor(node), node, node->data
     );

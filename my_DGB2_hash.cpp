@@ -36,21 +36,6 @@ int FindEqualsHash(const hash_s* hashes)
 }
 
 
-unsigned long int DGB2Hash(const char* str)
-{
-    unsigned long int hash = 5381;  // магическое число над которым чувак бился пол жизни
-
-    unsigned char c = 0;
-
-    while ((c = (unsigned char) *str++) != '\0') {
-        ON_DEBUG(printf("%c -> %d\n", *str, *str));
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-    }
-
-    return hash;
-}
-
-
 hash_s* MakeHashes(hash_s* hashes)
 {
     for (size_t i = 0; i < MODES_NUM; i++)

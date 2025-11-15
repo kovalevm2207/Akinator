@@ -7,9 +7,27 @@ digraph DUMP
     node0 [shape=plaintext, label=<
         <TABLE BORDER="0" CELLBORDER="2" CELLSPACING="3" CELLPADDING="3" BGCOLOR="#0bdfeeff" FIXEDSIZE="FALSE" ALIGN="CENTER" VALIGN="MIDDLE" SIDES="LRTB" >
             <TR><TD PORT="h" BGCOLOR="#ffffffff" COLSPAN="2" COLOR="#383838ff">node0</TD></TR>
+            <TR><TD PORT="p" BGCOLOR="#0022ff" COLSPAN="2" COLOR="#000000">0x503000000250</TD></TR>
+            <TR><TD PORT="d" BGCOLOR="#c5a1e6ff" COLSPAN="2" COLOR="#000000">не летает </TD></TR>
+            <TR><TD PORT="l" COLSPAN="1" ALIGN="CENTER" COLOR="#000000" BGCOLOR="#00ff44">0x5030000001f0</TD><TD PORT="r" COLSPAN="1" ALIGN="CENTER" COLOR="#000000" BGCOLOR="#00eeff">0x503000000220</TD></TR>
+        </TABLE>
+    >];
+    node1 [shape=plaintext, label=<
+        <TABLE BORDER="0" CELLBORDER="2" CELLSPACING="3" CELLPADDING="3" BGCOLOR="#0bdfeeff" FIXEDSIZE="FALSE" ALIGN="CENTER" VALIGN="MIDDLE" SIDES="LRTB" >
+            <TR><TD PORT="h" BGCOLOR="#ffffffff" COLSPAN="2" COLOR="#383838ff">node1</TD></TR>
             <TR><TD PORT="p" BGCOLOR="#00ff44" COLSPAN="2" COLOR="#000000">0x5030000001f0</TD></TR>
-            <TR><TD PORT="d" BGCOLOR="#c5a1e6ff" COLSPAN="2" COLOR="#000000">ROOT</TD></TR>
+            <TR><TD PORT="d" BGCOLOR="#c5a1e6ff" COLSPAN="2" COLOR="#000000">машина </TD></TR>
             <TR><TD PORT="l" COLSPAN="1" ALIGN="CENTER" COLOR="#000000" BGCOLOR="#cccccc">0x000000000000</TD><TD PORT="r" COLSPAN="1" ALIGN="CENTER" COLOR="#000000" BGCOLOR="#cccccc">0x000000000000</TD></TR>
         </TABLE>
     >];
+    node2 [shape=plaintext, label=<
+        <TABLE BORDER="0" CELLBORDER="2" CELLSPACING="3" CELLPADDING="3" BGCOLOR="#0bdfeeff" FIXEDSIZE="FALSE" ALIGN="CENTER" VALIGN="MIDDLE" SIDES="LRTB" >
+            <TR><TD PORT="h" BGCOLOR="#ffffffff" COLSPAN="2" COLOR="#383838ff">node2</TD></TR>
+            <TR><TD PORT="p" BGCOLOR="#00eeff" COLSPAN="2" COLOR="#000000">0x503000000220</TD></TR>
+            <TR><TD PORT="d" BGCOLOR="#c5a1e6ff" COLSPAN="2" COLOR="#000000">самолет </TD></TR>
+            <TR><TD PORT="l" COLSPAN="1" ALIGN="CENTER" COLOR="#000000" BGCOLOR="#cccccc">0x000000000000</TD><TD PORT="r" COLSPAN="1" ALIGN="CENTER" COLOR="#000000" BGCOLOR="#cccccc">0x000000000000</TD></TR>
+        </TABLE>
+    >];
+    node0:<l> -> node1:n [dir=normal, color="#4d00a6ff"];
+    node0:<r> -> node2:n [dir=normal, color="#4d00a6ff"];
 }

@@ -10,9 +10,8 @@ const int START_LENGTH = 1 << 2;
 /*unused*/ char* MyGetline(char* buffer);
 
 int WorkWithHashes(hash_s* hashes);
-int GetUserAns(char** UserAns);
 AkinatorMode_t AnalyzeUserAns(const char* buffer, hash_s* hashes);
 int BsearchCompareFunc(const void* searching_elem, const void* cur_elem);
-AkinatorErr_t DoMode(AkinatorMode_t mode, Node_t* root, int* count_img);
+AkinatorErr_t DoMode(AkinatorMode_t mode, Node_t** root, int* count_img);
 
 #endif // AKINATOR

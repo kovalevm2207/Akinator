@@ -8,7 +8,7 @@ Node_t* TreeNodeCtor(Tree_t data, Node_t* left_som, Node_t* right_som);
 TreeErr_t TreeInsertLeft(Node_t* base_node, Node_t* inserting_node);
 TreeErr_t TreeInsertRight(Node_t* base_node, Node_t* inserting_node);
 TreeErr_t TreeSortInsert(Node_t* root, Node_t* node);
-TreeErr_t DeleteTreeNode(Node_t* node);
+TreeErr_t DeleteTreeNode(Node_t** node);
 TreeErr_t PrintTreeNode(const Node_t* node, const char* mode);
 TreeErr_t TreeDump_(const Node_t* node, int count_im, const char* func, const char* file, int line);
 

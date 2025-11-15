@@ -5,8 +5,10 @@ Node_t* TreeNodeCtor(Tree_t data, Node_t* left_som, Node_t* right_som)
     Node_t* node = (Node_t*) calloc(1, sizeof(Node_t));
     if(node == NULL) return NULL;
 
+    // strdup = size + ptr + memcpy();
+
     node->root = NULL;
-    node->data = data;
+    node->data = strdup(data);
     node->left = left_som;
     node->right = right_som;
 
@@ -19,10 +21,10 @@ Node_t* TreeNodeCtor(Tree_t data, Node_t* left_som, Node_t* right_som)
 
 TreeErr_t TreeInsertLeft(Node_t* base_node, Node_t* inserting_node)
 {
-    if (base_node->left != NULL) return TREE_ERR_NODE_NOT_EMPTY;
+    if (base_node->left != NULL)  return TREE_ERR_NODE_NOT_EMPTY;
 
     base_node->left = inserting_node;
-    inserting_node->root = &base_node->left;
+    inserting_node->root = &base_node->left;  // root = prev_node
 
     return TREE_OK;
 }
@@ -64,18 +66,22 @@ TreeErr_t TreeSortInsert(Node_t* root, Node_t* node)
 }
 
 
-TreeErr_t DeleteTreeNode(Node_t* node)
+TreeErr_t DeleteTreeNode(Node_t** node)
 {
     assert(node != NULL);
+    if(*node == NULL) return NULL_NODE;
 
-    if (node->left)  DeleteTreeNode(node->left);
-    if (node->right) DeleteTreeNode(node->right);
+    if ((*node)->left)  printf("\033[31m" "%p\n" "\033[0m", (*node)->left);  DeleteTreeNode(&((*node)->left));
+    if ((*node)->right) printf("\033[31m" "%p\n" "\033[0m", (*node)->right); DeleteTreeNode(&((*node)->right));
 
-    node->data = 0;
-    if (node->root) *node->root = NULL;
+    free((*node)->data);
+    (*node)->data = 0;
+    if ((*node)->root) *((*node)->root) = NULL;
 
-    free(node);
-    node = NULL;
+    ON_DEBUG(printf("DeleteTreeNode До удаления : %p\n", *node));
+    free(*node);
+    *node = NULL;
+    ON_DEBUG(printf("DeleteTreeNode После удаления : %p\n", *node));
 
     return TREE_OK;
 }
@@ -89,7 +95,7 @@ TreeErr_t PrintTreeNode(const Node_t* node, const char* mode)
         POSTORDER = 'r' - 'l'
     } TraverseMode_t;
 
-    assert(node != NULL);
+    if( node == NULL) return NULL_NODE;
     assert(mode != NULL);
     assert(*mode == 'l' || *mode == 'r' || *mode == 'm');
 
@@ -123,10 +129,11 @@ TreeErr_t PrintTreeNode(const Node_t* node, const char* mode)
 
 TreeErr_t TreeDump_(const Node_t* node, int count_img, const char* func, const char* file, int line)
 {
-    assert(node != NULL);
+    ON_DEBUG(printf("node ptr = %p\n", node));
+    if (node == NULL) return NULL_NODE;
 
     CreateDotFile(node);
-    char command[MAX_FILE_NAME];
+    char command[MAX_FILE_NAME] = {};
     sprintf(command, "dot -Tsvg TreeMemStruct/svg_dot/dump.dot -o TreeMemStruct/svg_dot/%ddump.svg", count_img);
     system(command);
 

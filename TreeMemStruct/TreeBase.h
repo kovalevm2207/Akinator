@@ -4,8 +4,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 
-typedef const char* Tree_t;
+typedef char* Tree_t;
+
+// to do: struct Tree_s {ptr, max_size}
 
 typedef struct Node_t
 {
@@ -22,15 +25,18 @@ typedef enum
     TREE_ERR_NODE_NOT_EMPTY = 1 << 2,
     NULL_FILE               = 1 << 3,
     END_FILE_ERR            = 1 << 4,
-    TREE_ERR_DUPLICATE_NODE = 1 << 5
+    TREE_ERR_DUPLICATE_NODE = 1 << 5,
+    NULL_NODE               = 1 << 6
 } TreeErr_t;
 
 #ifdef DEBUG
+    #define ON_DEBUG(func) func
     #define CHECK_PTR(param, name) if (param == NULL)        \
                                     {                        \
                                         return NULL_##name;  \
                                     }
 #else
+    #define ON_DEBUG(func)
     #define CHECK_PTR(param, name)
 #endif // DEBUG
 

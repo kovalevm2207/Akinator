@@ -19,7 +19,8 @@ typedef enum
     MODES_NUM_ERR  = 1 << 1,
     INCORRECT_MODE = 1 << 2,
     SHOW_TREE_ERR  = 1 << 3,
-    UPDATE_ERR     = 1 << 4
+    UPDATE_ERR     = 1 << 4,
+    GET_ANS_ERR    = 1 << 5
 } AkinatorErr_t;
 
 typedef enum
@@ -39,7 +40,7 @@ typedef struct
 {
     AkinatorMode_t num;
     const char* name;
-    AkinatorErr_t (* func)(Node_t* root, int* count_img);
+    AkinatorErr_t (* func)(Node_t** root, int* count_img);
 }mode_s;
 
 typedef struct
@@ -75,18 +76,20 @@ typedef struct
     printf("О путник, на тебе лежит злое проклятие лорда маковода, прости ,но я не могу тебе ничем помочь, уходи...\n");
 #endif
 
+int GetUserAns(char** UserAns);
+unsigned long int DGB2Hash(const char* str);
 
-AkinatorErr_t ShowTree(Node_t* root, int* count_img);
-AkinatorErr_t SayGoodby(Node_t* root, int* count_img);
-AkinatorErr_t UpdateTree(Node_t* root, int* count_img);
-
+AkinatorErr_t ShowTree(Node_t** root, int* count_img);
+AkinatorErr_t SayGoodby(Node_t** root, int* count_img);
+AkinatorErr_t UpdateTree(Node_t** root, int* count_img);
+AkinatorErr_t Guessing(Node_t** root, int* count_img);
 
 const mode_s ModeStructArr[] =
 {
     {DEFINITION,     "определение",            NULL},
     {COMPARISON,     "сравнить",               NULL},
     {UPDATE,         "обновить",               UpdateTree},
-    {GUESSING,       "отгадывание",            NULL},
+    {GUESSING,       "отгадывание",            Guessing},
     {END,            "закончить",              SayGoodby},
     {ADD_NODE,       "добавить узел",          NULL},
     {SHOW_TREE,      "показать древо знаний",  ShowTree},
