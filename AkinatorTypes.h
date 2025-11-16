@@ -19,7 +19,8 @@ typedef enum
     INCORRECT_MODE = 1 << 2,
     SHOW_TREE_ERR  = 1 << 3,
     UPDATE_ERR     = 1 << 4,
-    GET_ANS_ERR    = 1 << 5
+    GET_ANS_ERR    = 1 << 5,
+    OPEN_FILE_ERR  = 1 << 6
 } AkinatorErr_t;
 
 typedef enum
@@ -84,6 +85,7 @@ AkinatorErr_t UpdateTree(Node_t** root, int* count_img);
 int Confirm(void);
 AkinatorErr_t CreateNewNode(Node_t* cur_node);
 AkinatorErr_t Guessing(Node_t** root, int* count_img);
+AkinatorErr_t WriteTreeInFile(Node_t** root, int* count_img);
 
 
 const mode_s ModeStructArr[] =
@@ -95,8 +97,8 @@ const mode_s ModeStructArr[] =
     {END,            "закончить",              SayGoodby},
     {ADD_NODE,       "добавить узел",          NULL},
     {SHOW_TREE,      "показать древо знаний",  ShowTree},
-    {WRIGHT_IN_FILE, "записать знания в файл", NULL},
-    {UNKNOWN,        "UNKNOWN_CODE",           NULL}
+    {WRIGHT_IN_FILE, "записать знания в файл", WriteTreeInFile},
+    {UNKNOWN,        "UNKNOWN_CODE",           NULL},
 };
 
 const size_t MODES_NUM = sizeof(ModeStructArr)/sizeof(ModeStructArr[0]);

@@ -1,36 +1,32 @@
 #include "TreeDump.h"
 
-TreeErr_t PrintLeftTree(const Node_t* node, const char* mode)
+TreeErr_t PrintLeftTree(FILE* stream, const Node_t* node, const char* mode)
 {
     assert(node != NULL);
     assert(mode != NULL);
     assert(*mode == 'l' || *mode == 'r' || *mode == 'm');
 
-    if (node->left)
-    {
-        return PrintTreeNode(node->left, mode);
-    }
+    if (node->left) return PrintTreeNode(stream, node->left, mode);
+    else fprintf(stream, "%p", node->left);
 
     return TREE_OK;
 }
 
 
-TreeErr_t PrintRightTree(const Node_t* node, const char* mode)
+TreeErr_t PrintRightTree(FILE* stream, const Node_t* node, const char* mode)
 {
     assert(node != NULL);
     assert(mode != NULL);
     assert(*mode == 'l' || *mode == 'r' || *mode == 'm');
 
-    if (node->right)
-    {
-        return PrintTreeNode(node->right, mode);
-    }
+    if (node->right) return PrintTreeNode(stream, node->right, mode);
+    else fprintf(stream, "%p", node->right);
 
     return TREE_OK;
 }
 
 
-TreeErr_t PrintTreeData(const Node_t* node, const char* mode)
+TreeErr_t PrintTreeData(FILE* stream, const Node_t* node, const char* mode)
 {
     assert(node != NULL);
     assert(mode != NULL);
@@ -38,7 +34,7 @@ TreeErr_t PrintTreeData(const Node_t* node, const char* mode)
 
     (void) mode;
 
-    printf("%s", node->data);
+    fprintf(stream, "\"%s\"", node->data);
 
     return TREE_OK;
 }

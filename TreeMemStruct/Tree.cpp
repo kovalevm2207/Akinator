@@ -85,7 +85,7 @@ TreeErr_t DeleteTreeNode(Node_t** node)
 }
 
 
-TreeErr_t PrintTreeNode(const Node_t* node, const char* mode)
+TreeErr_t PrintTreeNode(FILE* stream, const Node_t* node, const char* mode)
 {
     typedef enum {
         PREORDER = 'l' - 'l',
@@ -97,7 +97,7 @@ TreeErr_t PrintTreeNode(const Node_t* node, const char* mode)
     assert(mode != NULL);
     assert(*mode == 'l' || *mode == 'r' || *mode == 'm');
 
-    typedef TreeErr_t (* PrintFunc_t)(const Node_t* node, const char* mode);
+    typedef TreeErr_t (* PrintFunc_t)(FILE* stream, const Node_t* node, const char* mode);
 
     typedef struct
     {
@@ -115,11 +115,11 @@ TreeErr_t PrintTreeNode(const Node_t* node, const char* mode)
 
     const mode_s* cur_mode = &modes[*mode - 'l'];
 
-    printf("(");
-    cur_mode->func1(node, cur_mode->mode);
-    cur_mode->func2(node, cur_mode->mode);
-    cur_mode->func3(node, cur_mode->mode);
-    printf(")");
+    fprintf(stream, "(");
+    cur_mode->func1(stream, node, cur_mode->mode);
+    cur_mode->func2(stream, node, cur_mode->mode);
+    cur_mode->func3(stream, node, cur_mode->mode);
+    fprintf(stream, ")");
 
     return TREE_OK;
 }

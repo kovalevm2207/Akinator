@@ -27,5 +27,6 @@ void PrintSecondStartTree(void);
 void PrintStartTree(void);
 void PrintDeleteAns(void);
 void PrintContinue(void);
+void PrintWhereWrite(void);
 
 #endif

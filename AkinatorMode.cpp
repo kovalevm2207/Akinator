@@ -24,7 +24,6 @@ size_t GetUserAns(char** UserAns)
 unsigned long int DGB2Hash(const char* str)
 {
     unsigned long int hash = 5381;  // магическое число над которым чувак бился пол жизни
-
     unsigned char c = 0;
 
     while ((c = (unsigned char) *str++) != '\0') {
@@ -161,6 +160,26 @@ AkinatorErr_t Guessing(Node_t** root, int* count_img)
             }
         }
     }
+
+    return AKINATOR_OK;
+}
+
+
+AkinatorErr_t WriteTreeInFile(Node_t** root, int* count_img)
+{
+    (void) count_img;
+
+    PrintWhereWrite();
+    char* UserAns = NULL;
+    GetUserAns(&UserAns);
+    FILE* file = fopen(strcat(UserAns,".txt"), "w");
+    free(UserAns);
+    UserAns = NULL;
+    if(file == NULL) return OPEN_FILE_ERR;
+
+    PrintTreeNode(file, *root, "l");
+    fclose(file);
+    file = NULL;
 
     return AKINATOR_OK;
 }
