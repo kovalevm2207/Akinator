@@ -28,5 +28,6 @@ void PrintStartTree(void);
 void PrintDeleteAns(void);
 void PrintContinue(void);
 void PrintWhereWrite(void);
+void PrintReadFromQuestion(void);
 
 #endif

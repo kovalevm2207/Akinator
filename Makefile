@@ -31,8 +31,8 @@ endif
 
 TREE_DIR = TreeMemStruct
 
-all: $(TREE_DIR)/Tree.o AkinatorMain.o $(TREE_DIR)/TreeDump.o DGB2.o OUT.o Mode.o
-	@ g++ $(FLAGS) $(MODE) $(TREE_DIR)/Tree.o AkinatorMain.o DGB2.o OUT.o Mode.o $(TREE_DIR)/TreeDump.o -o akinator
+all: $(TREE_DIR)/Tree.o AkinatorMain.o $(TREE_DIR)/TreeDump.o DGB2.o OUT.o Mode.o ReadFile.o
+	@ g++ $(FLAGS) $(MODE) $(TREE_DIR)/Tree.o AkinatorMain.o DGB2.o OUT.o Mode.o ReadFile.o $(TREE_DIR)/TreeDump.o -o akinator
 
 $(TREE_DIR)/Tree.o: $(TREE_DIR)/Tree.cpp $(TREE_DIR)/Tree.h $(TREE_DIR)/TreeBase.h
 	@ g++ $(FLAGS) $(MODE) -c $(TREE_DIR)/Tree.cpp -o $(TREE_DIR)/Tree.o
@@ -51,6 +51,11 @@ OUT.o: OutFunctions.cpp OutFunctions.h AkinatorTypes.h
 
 Mode.o: AkinatorMode.cpp AkinatorTypes.h $(TREE_DIR)/Tree.h
 	@ g++ $(FLAGS) $(MODE) -c AkinatorMode.cpp -o Mode.o
+
+
+ReadFile.o: ReadFile.cpp ReadFile.h
+	@ g++ $(FLAGS) $(MODE) -c ReadFile.cpp -o ReadFile.o
+
 
 clean:
 	rm *.o $(TREE_DIR)/*.o akinator

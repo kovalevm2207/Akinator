@@ -2,27 +2,20 @@
 
 size_t GetUserAns(char** UserAns)
 {
-    size_t len = 0;
-    #ifdef __linux__
-        ssize_t len_ = 0;
-        size_t size = 0;
-        if ((len_ = getline(UserAns, &size, stdin)) <= 0) {printf(RED_COLOR "getline USER ANSWER ERR\n" RESET); return 1;}
-        len = (size_t) len_;
-        (*UserAns)[len - 1] = '\0';
-    #elif defined(_WIN32)
-        // Моя реализация getline() ... зачем ... ааа для windows повезло повезло)))), хотя вроде getline должен быть в TXLib.h?
-        UserAns = (char*) calloc(START_LENGTH, sizeof(char));
-        if (UserAns == NULL) {printf(RED_COLOR "MEMORY ALLOCATION ERR\n" RESET); return 1;}
-        len = MyGetline(UserAns);
-        // TXSpeak("a b c d e f g h i j k l m o n"); // ну может будет когда-то
-    #endif
+    assert(UserAns != NULL);
 
-    return len;
+    ssize_t len = 0;
+    size_t size = 0;
+    if ((len = getline(UserAns, &size, stdin)) <= 0) {printf(RED_COLOR "getline USER ANSWER ERR\n" RESET); return 1;}
+    (*UserAns)[(size_t) len - 1] = '\0';
+    return (size_t) len;
 }
 
 
 unsigned long int DGB2Hash(const char* str)
 {
+    assert(str != NULL);
+
     unsigned long int hash = 5381;  // магическое число над которым чувак бился пол жизни
     unsigned char c = 0;
 
@@ -37,6 +30,9 @@ unsigned long int DGB2Hash(const char* str)
 
 AkinatorErr_t ShowTree(Node_t** root, int* count_img)
 {
+    assert(root != NULL);
+    assert(count_img != NULL);
+
     TreeErr_t status = TreeDump(*root, *count_img);
     if (status == TREE_OK || status == NULL_NODE)
     {
@@ -56,6 +52,9 @@ AkinatorErr_t ShowTree(Node_t** root, int* count_img)
 
 AkinatorErr_t SayGoodby(Node_t** root, int* count_img)
 {
+    assert(root != NULL);
+    assert(count_img != NULL);
+
     (void) count_img;
     (void) root;
 
@@ -66,6 +65,9 @@ AkinatorErr_t SayGoodby(Node_t** root, int* count_img)
 
 AkinatorErr_t UpdateTree(Node_t** root, int* count_img)
 {
+    assert(root != NULL);
+    assert(count_img != NULL);
+
     (void) count_img;
     DeleteTreeNode(root);
 
@@ -98,6 +100,8 @@ int Confirm(void)
 
 AkinatorErr_t CreateNewNode(Node_t* cur_node)
 {
+    assert(cur_node != NULL);
+
     char* UserAns = NULL;
 
     PrintQuestionWho();
@@ -121,6 +125,9 @@ AkinatorErr_t CreateNewNode(Node_t* cur_node)
 
 AkinatorErr_t Guessing(Node_t** root, int* count_img)
 {
+    assert(root != NULL);
+    assert(count_img != NULL);
+
     (void) count_img;
     char* UserAns = NULL;
 
@@ -165,21 +172,166 @@ AkinatorErr_t Guessing(Node_t** root, int* count_img)
 }
 
 
+FILE* TakeFileName(size_t* file_size, const char* mode)
+{
+    assert(file_size != NULL);
+    assert(mode != NULL);
+
+    char* UserAns = NULL;
+    GetUserAns(&UserAns);
+    if (strcmp(mode, "r") == 0) *file_size = find_file_size(UserAns);
+
+    FILE* file = fopen(UserAns, mode);
+
+    free(UserAns);
+    UserAns = NULL;
+    return file;
+}
+
+
 AkinatorErr_t WriteTreeInFile(Node_t** root, int* count_img)
 {
+    assert(root != NULL);
+    assert(count_img != NULL);
+
     (void) count_img;
 
     PrintWhereWrite();
-    char* UserAns = NULL;
-    GetUserAns(&UserAns);
-    FILE* file = fopen(strcat(UserAns,".txt"), "w");
-    free(UserAns);
-    UserAns = NULL;
+    size_t file_size = 0;
+    FILE* file = TakeFileName(&file_size, "w");
     if(file == NULL) return OPEN_FILE_ERR;
 
     PrintTreeNode(file, *root, "l");
     fclose(file);
     file = NULL;
 
+    return AKINATOR_OK;
+}
+
+
+char* ReadFile(void)
+{
+    PrintReadFromQuestion();
+
+    size_t file_size = 0;
+    FILE* file = TakeFileName(&file_size, "r");
+    if(file == NULL) return NULL;
+
+    char* buffer = (char*) calloc(file_size + 1,sizeof(char));
+    if (buffer == NULL)
+    {
+        fclose(file);
+        file = NULL;
+        return NULL;
+    }
+
+    size_t ret = fread(buffer, sizeof(char), file_size, file);
+    if (ret != file_size)
+    {
+        fclose(file);
+        free(buffer);
+        file = NULL;
+        buffer = NULL;
+        return NULL;
+    }
+    fclose(file);
+    file = NULL;
+
+    return buffer;
+}
+
+
+char* SkipSpaces(char* ptr)
+{
+    assert(ptr != NULL);
+
+    while(*ptr && isspace((unsigned char) *ptr))
+    {
+        switch(*ptr)
+        {
+            case '\n':
+                ON_DEBUG(printf("enter\n"));
+                break;
+            case ' ':
+                ON_DEBUG(printf("space\n"));
+                break;
+            default:
+                ON_DEBUG(printf("%c", *ptr));
+                break;
+        }
+
+        ptr++;
+    }
+    return ptr;
+}
+
+
+AkinatorErr_t ReadTreeFromFile(Node_t** root, int* count_img)
+{
+    assert(root != NULL);
+    assert(count_img != NULL);
+
+    (void) count_img;
+    UpdateTree(root, count_img);
+
+    char* buffer = ReadFile();
+    if (buffer == NULL) return READ_FILE_ERR;
+    char* cur_pos = SkipSpaces(buffer);
+
+    *root = ReadTreeNode(&cur_pos);
+
+    free(buffer);
+    buffer = NULL;
+
+    return AKINATOR_OK;
+}
+
+
+Node_t* ReadTreeNode(char** cur_pos)
+{
+    assert(cur_pos != NULL);
+
+    Node_t* node = NULL;
+
+    if(**cur_pos == '(')
+    {
+        *cur_pos = SkipSpaces(*cur_pos + 1);
+        int start_pos = 0, end_pos = 0;
+        sscanf(*cur_pos, "\"%n%*[^\"]%n\"", &start_pos, &end_pos);
+
+        int len = end_pos - start_pos;
+        node = TreeNodeCtor(strndup(*cur_pos + start_pos, (size_t) len), NULL, NULL);
+
+        *cur_pos = SkipSpaces(*cur_pos + end_pos + 1);
+        Node_t* left_son = ReadTreeNode(cur_pos);
+        TreeInsertLeft (node, left_son);
+
+        Node_t* right_son = ReadTreeNode(cur_pos);
+        TreeInsertRight(node, right_son);
+
+        *cur_pos = SkipSpaces(*cur_pos);
+        if (**cur_pos == ')')
+        {
+            *cur_pos = SkipSpaces(*cur_pos + 1);
+            ON_DEBUG(printf(RED_COLOR ")\n" RESET));
+            return node;
+        }
+        else {free(node); node = NULL; return NULL;}
+    }
+    else if (strncmp(*cur_pos, "nil", sizeof("nil") - 1) == 0)
+    {
+        *cur_pos += sizeof("nil") - 1;
+        *cur_pos = SkipSpaces(*cur_pos);
+        return NULL;
+    }
+    else return NULL;
+}
+
+
+AkinatorErr_t Definition(Node_t** root, int* count_img)
+{
+    assert(root != NULL);
+    assert(count_img != NULL);
+    
     return AKINATOR_OK;
 }

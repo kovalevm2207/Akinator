@@ -19,10 +19,11 @@ Node_t* TreeNodeCtor(Tree_t data, Node_t* left_som, Node_t* right_som)
 
 TreeErr_t TreeInsertLeft(Node_t* base_node, Node_t* inserting_node)
 {
+    assert(base_node != NULL);
     if (base_node->left != NULL)  return TREE_ERR_NODE_NOT_EMPTY;
 
     base_node->left = inserting_node;
-    inserting_node->root = &base_node->left;  // root = prev_node
+    if (inserting_node) inserting_node->root = &base_node->left;  // root = prev_node
 
     return TREE_OK;
 }
@@ -30,10 +31,11 @@ TreeErr_t TreeInsertLeft(Node_t* base_node, Node_t* inserting_node)
 
 TreeErr_t TreeInsertRight(Node_t* base_node, Node_t* inserting_node)
 {
+    assert(base_node != NULL);
     if (base_node->right != NULL) return TREE_ERR_NODE_NOT_EMPTY;
 
     base_node->right = inserting_node;
-    inserting_node->root = &base_node->right;
+    if (inserting_node) inserting_node->root = &base_node->right;
 
     return TREE_OK;
 }
@@ -93,7 +95,7 @@ TreeErr_t PrintTreeNode(FILE* stream, const Node_t* node, const char* mode)
         POSTORDER = 'r' - 'l'
     } TraverseMode_t;
 
-    if( node == NULL) return NULL_NODE;
+    //if( node == NULL) return NULL_NODE;
     assert(mode != NULL);
     assert(*mode == 'l' || *mode == 'r' || *mode == 'm');
 

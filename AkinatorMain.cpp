@@ -40,6 +40,8 @@ int main()
 // sorted
 int WorkWithHashes(hash_s* hashes)
 {
+    assert(hashes != NULL);
+
     MakeHashes(hashes);
     if (FindEqualsHash(hashes)) {printf(RED_COLOR "YOU HAVE EQUALS HASHES\n" RESET); return 1;}
     ON_DEBUG(printf("Массив с хешами до сортировки:\n"));
@@ -55,6 +57,9 @@ int WorkWithHashes(hash_s* hashes)
 
 AkinatorMode_t AnalyzeUserAns(const char* buffer, hash_s* hashes)
 {
+    assert(buffer != NULL);
+    assert(hashes != NULL);
+
     AkinatorMode_t mode = UNKNOWN;
 
     size_t ans_hash = DGB2Hash(buffer);
@@ -73,6 +78,9 @@ AkinatorMode_t AnalyzeUserAns(const char* buffer, hash_s* hashes)
 // передаю unsigned long int*, а в массиве лежат mode_s
 int BsearchCompareFunc(const void* searching_elem, const void* cur_elem)
 {
+    assert(searching_elem != NULL);
+    assert(cur_elem != NULL);
+
     const unsigned long int* searching_elem_ = (const unsigned long int*) searching_elem;
     const hash_s* cur_elem_ = (const hash_s*) cur_elem;
 
@@ -85,6 +93,9 @@ int BsearchCompareFunc(const void* searching_elem, const void* cur_elem)
 
 AkinatorErr_t DoMode(AkinatorMode_t mode, Node_t** root, int* count_img)
 {
+    assert(root != NULL);
+    assert(count_img != NULL);
+
     if (mode > 0 && mode <= UNKNOWN)
     {
         AkinatorErr_t status = ModeStructArr[mode].func(root, count_img);
@@ -97,6 +108,8 @@ AkinatorErr_t DoMode(AkinatorMode_t mode, Node_t** root, int* count_img)
 
 size_t MyGetline(char* buffer)
 {
+    assert(buffer != NULL);
+
     size_t CUR_LENGTH = START_LENGTH;
     size_t LAST_LENGTH = 0;
     char* slash_n_pos = 0;
