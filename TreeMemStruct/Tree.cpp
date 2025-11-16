@@ -5,10 +5,8 @@ Node_t* TreeNodeCtor(Tree_t data, Node_t* left_som, Node_t* right_som)
     Node_t* node = (Node_t*) calloc(1, sizeof(Node_t));
     if(node == NULL) return NULL;
 
-    // strdup = size + ptr + memcpy();
-
+    node->data = data;
     node->root = NULL;
-    node->data = strdup(data);
     node->left = left_som;
     node->right = right_som;
 
@@ -69,19 +67,19 @@ TreeErr_t TreeSortInsert(Node_t* root, Node_t* node)
 TreeErr_t DeleteTreeNode(Node_t** node)
 {
     assert(node != NULL);
-    if(*node == NULL) return NULL_NODE;
+    if (*node == NULL) return NULL_NODE;
 
-    if ((*node)->left)  printf("\033[31m" "%p\n" "\033[0m", (*node)->left);  DeleteTreeNode(&((*node)->left));
-    if ((*node)->right) printf("\033[31m" "%p\n" "\033[0m", (*node)->right); DeleteTreeNode(&((*node)->right));
+    Node_t* cur_node = *node;
 
-    free((*node)->data);
-    (*node)->data = 0;
-    if ((*node)->root) *((*node)->root) = NULL;
+    if (cur_node->left)  DeleteTreeNode(&cur_node->left);
+    if (cur_node->right) DeleteTreeNode(&cur_node->right);
 
-    ON_DEBUG(printf("DeleteTreeNode До удаления : %p\n", *node));
-    free(*node);
+    free(cur_node->data);
+    cur_node->data = NULL;
+    if (cur_node->root) *(cur_node->root) = NULL;
+
+    free(cur_node);
     *node = NULL;
-    ON_DEBUG(printf("DeleteTreeNode После удаления : %p\n", *node));
 
     return TREE_OK;
 }

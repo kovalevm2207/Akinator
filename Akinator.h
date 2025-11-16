@@ -7,7 +7,7 @@
 
 const int START_LENGTH = 1 << 2;
 
-/*unused*/ char* MyGetline(char* buffer);
+size_t MyGetline(char* buffer);
 
 int WorkWithHashes(hash_s* hashes);
 AkinatorMode_t AnalyzeUserAns(const char* buffer, hash_s* hashes);

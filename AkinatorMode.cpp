@@ -1,21 +1,23 @@
 #include "AkinatorTypes.h"
 
-int GetUserAns(char** UserAns)
+size_t GetUserAns(char** UserAns)
 {
+    size_t len = 0;
     #ifdef __linux__
+        ssize_t len_ = 0;
         size_t size = 0;
-        ssize_t len = 0;
-        if ((len = getline(UserAns, &size, stdin)) <= 0) {printf(RED_COLOR "getline USER ANSWER ERR\n" RESET); return 1;}
+        if ((len_ = getline(UserAns, &size, stdin)) <= 0) {printf(RED_COLOR "getline USER ANSWER ERR\n" RESET); return 1;}
+        len = (size_t) len_;
         (*UserAns)[len - 1] = '\0';
     #elif defined(_WIN32)
         // Моя реализация getline() ... зачем ... ааа для windows повезло повезло)))), хотя вроде getline должен быть в TXLib.h?
         UserAns = (char*) calloc(START_LENGTH, sizeof(char));
         if (UserAns == NULL) {printf(RED_COLOR "MEMORY ALLOCATION ERR\n" RESET); return 1;}
-        UserAns = MyGetline(UserAns);
+        len = MyGetline(UserAns);
         // TXSpeak("a b c d e f g h i j k l m o n"); // ну может будет когда-то
     #endif
 
-    return 0;
+    return len;
 }
 
 
@@ -66,32 +68,10 @@ AkinatorErr_t SayGoodby(Node_t** root, int* count_img)
 AkinatorErr_t UpdateTree(Node_t** root, int* count_img)
 {
     (void) count_img;
-    unsigned long int ans_hash = 0;
-    char* UserAns = NULL;
-    const unsigned long int yes = DGB2Hash("да"), no = DGB2Hash("нет");
     DeleteTreeNode(root);
 
     PrintDeleteAns();
-
-    int correct_ans = 0;
-    while (!correct_ans)
-    {
-        GetUserAns(&UserAns);
-        ans_hash = DGB2Hash(UserAns);
-        free(UserAns);
-        UserAns = NULL;
-
-        if (ans_hash == yes)
-        {
-            StartHTMLfile();
-            correct_ans = 1;
-        }
-        else if(ans_hash == no)
-        {
-            correct_ans = 1;
-        }
-        else PrintIncorrectAns();
-    }
+    if (Confirm()) StartHTMLfile();
 
     return AKINATOR_OK;
 }
@@ -123,19 +103,13 @@ AkinatorErr_t CreateNewNode(Node_t* cur_node)
 
     PrintQuestionWho();
     GetUserAns(&UserAns);
-    Node_t* left_object = TreeNodeCtor(UserAns, NULL, NULL);
     PrintComparisonQuestion(UserAns, cur_node->data);
-    free(UserAns);
-    UserAns = NULL;
+    Node_t* left_object = TreeNodeCtor(UserAns, NULL, NULL);
 
     GetUserAns(&UserAns);
     Node_t* right_object = TreeNodeCtor(cur_node->data, NULL, NULL);
 
-    free(cur_node->data);
-    cur_node->data = NULL;
-    cur_node->data  = strdup(UserAns);
-    free(UserAns);
-    UserAns = NULL;
+    cur_node->data = UserAns;
 
     TreeInsertLeft (cur_node,  left_object);
     TreeInsertRight(cur_node, right_object);
@@ -156,8 +130,6 @@ AkinatorErr_t Guessing(Node_t** root, int* count_img)
         PrintStartTree();
         GetUserAns(&UserAns);
         *root = TreeNodeCtor(UserAns, NULL, NULL);
-        free(UserAns);
-        UserAns = NULL;
 
         PrintIRemember();
         PrintContinueQuestion();

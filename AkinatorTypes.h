@@ -75,7 +75,7 @@ typedef struct
     printf("О путник, на тебе лежит злое проклятие лорда маковода, прости ,но я не могу тебе ничем помочь, уходи...\n");
 #endif
 
-int GetUserAns(char** UserAns);
+size_t GetUserAns(char** UserAns);
 unsigned long int DGB2Hash(const char* str);
 
 AkinatorErr_t ShowTree(Node_t** root, int* count_img);

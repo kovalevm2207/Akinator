@@ -19,16 +19,15 @@ int main()
     do
     {
         char* UserAns = NULL;
-        if (GetUserAns(&UserAns)) return 1;
+        GetUserAns(&UserAns);
         if (UserAns == NULL) {PrintGetlineErr(); free(UserAns); UserAns = NULL; continue;}
 
         mode = AnalyzeUserAns(UserAns, hashes);
-        if (mode == UNKNOWN) { PrintIncorrectAns(); free(UserAns); UserAns = NULL;
-                                                    continue;}
-        AkinatorErr_t status = DoMode(mode, &root, &count_img);
-
         free(UserAns);
         UserAns = NULL;
+
+        if (mode == UNKNOWN) { PrintIncorrectAns(); free(UserAns); UserAns = NULL; continue;}
+        DoMode(mode, &root, &count_img);
     } while (mode != END);
 
     system("pkill chrome");
@@ -96,21 +95,21 @@ AkinatorErr_t DoMode(AkinatorMode_t mode, Node_t** root, int* count_img)
 }
 
 
-char* MyGetline(char* buffer)
+size_t MyGetline(char* buffer)
 {
-    long unsigned int CUR_LENGTH = START_LENGTH;
-    long unsigned int LAST_LENGTH = 0;
+    size_t CUR_LENGTH = START_LENGTH;
+    size_t LAST_LENGTH = 0;
     char* slash_n_pos = 0;
 
     while (1)
     {
         if (fgets(buffer + LAST_LENGTH, (int) (CUR_LENGTH - LAST_LENGTH), stdin) == NULL)
         {
-            printf(RED_COLOR "FGETS USER ANSWER ERR\n" RESET); return NULL;
+            printf(RED_COLOR "FGETS USER ANSWER ERR\n" RESET); return 0;
         }
 
         ON_DEBUG(printf("Read: '");
-            for(long unsigned int i = 0; i < CUR_LENGTH; i++) {
+            for(size_t i = 0; i < CUR_LENGTH; i++) {
                 switch(buffer[i])
                 {
                     case '\0': printf("\\0"); break;
@@ -127,7 +126,7 @@ char* MyGetline(char* buffer)
         if (slash_n_pos == NULL)
         {
             char* Newbuffer = (char*) realloc(buffer, CUR_LENGTH * 2);
-            if (Newbuffer == NULL) {printf(RED_COLOR "MEMORY ALLOCATION ERR\n" RESET); return NULL;}
+            if (Newbuffer == NULL) {printf(RED_COLOR "MEMORY ALLOCATION ERR\n" RESET); return 0;}
 
             buffer = Newbuffer;
             memset(buffer + CUR_LENGTH, '\0', sizeof(char) * CUR_LENGTH);
@@ -141,5 +140,5 @@ char* MyGetline(char* buffer)
 
     *slash_n_pos = '\0';
     ON_DEBUG(fputs(buffer, stdout);)
-    return buffer;
+    return CUR_LENGTH;
 }
