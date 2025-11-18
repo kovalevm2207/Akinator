@@ -60,4 +60,4 @@ ReadFile.o: ReadFile.cpp ReadFile.h
 
 
 clean:
-	rm *.o $(TREE_DIR)/*.o akinator
+	rm *.o $(TREE_DIR)/*.o StackMemStruct/*.o akinator

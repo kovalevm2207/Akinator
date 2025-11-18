@@ -8,9 +8,9 @@ StackErr_t StackCtor_(stack_s* stk, size_t capacity, const char* file, int line)
     stk->data = (stack_t*) calloc(capacity  + 2, sizeof(stack_t));
     stk->size = 1;
     stk->capacity = capacity;
-    stk->data[0] = L_CANARY;
-    stk->data[capacity + 1] = R_CANARY;
-    for (size_t i = 1; i < capacity + 1; i++) stk->data[i] = POISON;
+    stk->data[0] = L_STACK_CANARY;
+    stk->data[capacity + 1] = R_STACK_CANARY;
+    for (size_t i = 1; i < capacity + 1; i++) stk->data[i] = STACK_POISON;
 
     STACK_OK
 
@@ -20,7 +20,6 @@ StackErr_t StackCtor_(stack_s* stk, size_t capacity, const char* file, int line)
 StackErr_t StackPush_(stack_s* stk, stack_t value, const char* file, int line)
 {
     int STATUS = ALL_OK;
-    if (value > MAXSIZE) STATUS |= BAD_VALUE;
 //    STACK_OK
 
     size_t capacity = stk->capacity;
@@ -32,7 +31,7 @@ StackErr_t StackPush_(stack_s* stk, stack_t value, const char* file, int line)
         stk->data = new_data;
         memset(new_data + capacity, 0, sizeof(stack_t) * capacity);
         stk->capacity *= 2;
-        stk->data[stk->capacity + 1] = R_CANARY;
+        stk->data[stk->capacity + 1] = R_STACK_CANARY;
     }
 
     stk->data[stk->size] = value;
@@ -51,7 +50,7 @@ StackErr_t StackPop_(stack_s* stk, stack_t* value, const char* file, int line)
 
     stk->size--;
     *value = stk->data[stk->size];
-    stk->data[stk->size] = POISON;
+    stk->data[stk->size] = STACK_POISON;
 
     STACK_OK
 
@@ -83,8 +82,8 @@ StackErr_t StackVerify(stack_s* stk, int STATUS) // todo add poisons
     if (stk->size < 1)                            STATUS |= BAD_SIZE_L;
     if (stk->data == NULL)                        STATUS |= BAD_DATA_PTR;
     else {
-        if (stk->data[0] != L_CANARY)                 STATUS |= LEFT_CANARY_DEAD;
-        if (stk->data[stk->capacity + 1] != R_CANARY) STATUS |= RIGHT_CANARY_DEAD;
+        if (stk->data[0] != L_STACK_CANARY)                 STATUS |= LEFT_CANARY_DEAD;
+        if (stk->data[stk->capacity + 1] != R_STACK_CANARY) STATUS |= RIGHT_CANARY_DEAD;
     }
     return (StackErr_t) STATUS;
 }
@@ -134,12 +133,12 @@ StackErr_t print_data(stack_s* stk)
     if (!(STATUS & BAD_DATA_PTR || STATUS & BAD_STK_CAPACITY || STATUS & BAD_START_CAPACITY)) {
         printf("    {\n");
         for (size_t i = 0; i < stk->capacity + 2; i++) {
-            if (stk->data[i] == POISON)
-                printf(CHANGE_ON CYAN  TEXT_COLOR  "        [%zu] = %d,         (POISON)\n" RESET, i, stk->data[i]);
-            if (stk->data[i] == L_CANARY || stk->data[i] == R_CANARY)
-                printf(CHANGE_ON PURPLE TEXT_COLOR "        [%zu] = %d,         (CANARY)\n" RESET, i, stk->data[i]);
-            else if (stk->data[i] != POISON )
-                printf(CHANGE_ON YELLOW TEXT_COLOR "       *[%zu] = %8d,         (VALUE) \n" RESET, i, stk->data[i]);
+            if (stk->data[i] == STACK_POISON)
+                printf(CHANGE_ON CYAN  TEXT_COLOR  "        [%zu] = %s,         (POISON)\n" RESET, i, stk->data[i]);
+            if (stk->data[i] == L_STACK_CANARY || stk->data[i] == R_STACK_CANARY)
+                printf(CHANGE_ON PURPLE TEXT_COLOR "        [%zu] = %s,         (CANARY)\n" RESET, i, stk->data[i]);
+            else if (stk->data[i] != STACK_POISON )
+                printf(CHANGE_ON YELLOW TEXT_COLOR "       *[%zu] = %8s,         (VALUE) \n" RESET, i, stk->data[i]);
         }
     printf("    }\n\n");
     }

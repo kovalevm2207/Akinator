@@ -1,4 +1,5 @@
 #include "AkinatorTypes.h"
+#include "StackMemStruct/my_stack.h"
 
 size_t GetUserAns(char** UserAns)
 {
@@ -331,12 +332,29 @@ Node_t* ReadTreeNode(char** cur_pos)
 
 AkinatorErr_t Definition(Node_t** root, int* count_img)
 {
+    printf("Зашел в функцию\n");
     assert(root != NULL);
     assert(count_img != NULL);
     (void) count_img;
 
     PrintWhichObject();
-    
+    stack_s definition_stack = {};
+    size_t start_capacity = 64;
+
+    StackCtor(&definition_stack, start_capacity);
+    printf(GREEN_COLOR "StackCtor success\n" RESET);
+
+    StackPush(&definition_stack, "test first");
+    printf(GREEN_COLOR "StackPush success\n" RESET);
+
+    const char* test_1 = NULL;
+    StackPop(&definition_stack, &test_1);
+    printf(GREEN_COLOR "StackPop success\n" RESET);
+
+    printf(GREEN_COLOR "%s\n" RESET, test_1);
+
+    StackDtor(&definition_stack);
+    printf(GREEN_COLOR "StackDtor success\n" RESET);
 
     return AKINATOR_OK;
 }

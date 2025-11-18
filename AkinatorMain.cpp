@@ -96,7 +96,7 @@ AkinatorErr_t DoMode(AkinatorMode_t mode, Node_t** root, int* count_img)
     assert(root != NULL);
     assert(count_img != NULL);
 
-    if (mode > 0 && mode <= UNKNOWN)
+    if (mode >= 0 && mode <= UNKNOWN)
     {
         AkinatorErr_t status = ModeStructArr[mode].func(root, count_img);
         if (mode != END) PrintContinue();

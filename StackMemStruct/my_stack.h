@@ -8,12 +8,12 @@
 
 #include "color_print.h"
 
-typedef int stack_t;
+typedef const char* stack_t;
 
 const int MAXSIZE = 1e9; // or todo 1e9
-const size_t L_CANARY = 0xBADDED;
-const size_t R_CANARY = 0xDEDBAD;
-const size_t POISON = 0xABCCBA;
+inline const char* L_STACK_CANARY = "BADDED";
+inline const char* R_STACK_CANARY = "DEDBAD";
+inline const char* STACK_POISON = "ABCCBA";
 
 typedef enum
 {
