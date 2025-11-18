@@ -10,6 +10,7 @@
 
 #include "ReadFile.h"
 #include "TreeMemStruct/Tree.h"
+#include "TreeMemStruct/Tree.h"
 #include "color_print.h"
 #include "OutFunctions.h"
 

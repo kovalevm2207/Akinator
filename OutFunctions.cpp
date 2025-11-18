@@ -185,3 +185,8 @@ void PrintReadFromQuestion(void)
       printf("Введите название файла в виде: ИмяФайла.txt , из которого мне прочитать информацию (расширение файла: *.txt)\n\n\t\t");
 }
 
+
+void PrintWhichObject(void)
+{
+      printf("Введите объект которому хотите дать определение:\n\n\t\t");
+}

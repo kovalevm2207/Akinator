@@ -164,6 +164,7 @@ AkinatorErr_t Guessing(Node_t** root, int* count_img)
                 CreateNewNode(cur_node);
                 PrintContinueQuestion();
                 if (!Confirm()) return AKINATOR_OK;
+                cur_node = *root;
             }
         }
     }
@@ -332,6 +333,10 @@ AkinatorErr_t Definition(Node_t** root, int* count_img)
 {
     assert(root != NULL);
     assert(count_img != NULL);
+    (void) count_img;
+
+    PrintWhichObject();
     
+
     return AKINATOR_OK;
 }

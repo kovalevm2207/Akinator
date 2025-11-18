@@ -29,5 +29,6 @@ void PrintDeleteAns(void);
 void PrintContinue(void);
 void PrintWhereWrite(void);
 void PrintReadFromQuestion(void);
+void PrintWhichObject(void);
 
 #endif
