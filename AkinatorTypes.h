@@ -10,6 +10,7 @@
 
 #include "ReadFile.h"
 #include "TreeMemStruct/Tree.h"
+#include "StackMemStruct/my_stack.h"
 #include "color_print.h"
 #include "OutFunctions.h"
 
@@ -86,13 +87,15 @@ AkinatorErr_t CreateNewNode(Node_t* cur_node);
 FILE* TakeFileName(size_t* file_size, const char* mode);
 char* SkipSpaces(char* ptr);
 
-char* ReadFile(void);
 AkinatorErr_t Definition(Node_t** root, int* count_img);
+Node_t* FindObjectInTree(stack_s* definition_stack, Node_t* node, char* searching_object);
+char* PreStrcat(const char* dest, const char* src);
 AkinatorErr_t UpdateTree(Node_t** root, int* count_img);
 AkinatorErr_t Guessing(Node_t** root, int* count_img);
 AkinatorErr_t SayGoodby(Node_t** root, int* count_img);
 AkinatorErr_t ShowTree(Node_t** root, int* count_img);
 AkinatorErr_t WriteTreeInFile(Node_t** root, int* count_img);
+char* ReadFile(void);
 AkinatorErr_t ReadTreeFromFile(Node_t** root, int* count_img);
 Node_t* ReadTreeNode(char** cur_pos);
 

@@ -30,5 +30,7 @@ void PrintContinue(void);
 void PrintWhereWrite(void);
 void PrintReadFromQuestion(void);
 void PrintWhichObject(void);
+void PrintNotFoundObject(char* searching_object);
+void PrintObjectDefinition(stack_s definition_stack, Node_t* root);
 
 #endif

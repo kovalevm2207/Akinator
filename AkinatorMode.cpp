@@ -1,5 +1,4 @@
 #include "AkinatorTypes.h"
-#include "StackMemStruct/my_stack.h"
 
 size_t GetUserAns(char** UserAns)
 {
@@ -332,29 +331,75 @@ Node_t* ReadTreeNode(char** cur_pos)
 
 AkinatorErr_t Definition(Node_t** root, int* count_img)
 {
-    printf("Зашел в функцию\n");
     assert(root != NULL);
     assert(count_img != NULL);
     (void) count_img;
 
-    PrintWhichObject();
-    stack_s definition_stack = {};
     size_t start_capacity = 64;
+    stack_s definition_stack = {};
+    char* UserAns = NULL;
 
-    StackCtor(&definition_stack, start_capacity);
-    printf(GREEN_COLOR "StackCtor success\n" RESET);
+    do
+    {
+        PrintWhichObject();
+        StackCtor(&definition_stack, start_capacity);
 
-    StackPush(&definition_stack, "test first");
-    printf(GREEN_COLOR "StackPush success\n" RESET);
+        GetUserAns(&UserAns);
 
-    const char* test_1 = NULL;
-    StackPop(&definition_stack, &test_1);
-    printf(GREEN_COLOR "StackPop success\n" RESET);
+        if (FindObjectInTree(&definition_stack, *root, UserAns))
+        {
+            PrintObjectDefinition(definition_stack, *root);
+        }
+        else
+        {
+            PrintNotFoundObject(UserAns);
+        }
 
-    printf(GREEN_COLOR "%s\n" RESET, test_1);
-
-    StackDtor(&definition_stack);
-    printf(GREEN_COLOR "StackDtor success\n" RESET);
+        free(UserAns);
+        UserAns = NULL;
+        StackDtor(&definition_stack);
+        PrintContinueQuestion();
+    }
+    while(Confirm());
 
     return AKINATOR_OK;
+}
+
+
+Node_t* FindObjectInTree(stack_s* definition_stack, Node_t* node, char* searching_object)
+{
+    assert(definition_stack != NULL);
+    assert(searching_object != NULL);
+    assert(node != NULL);
+
+    if(strcmp(searching_object, node->data) == 0)
+    {
+        StackPush(definition_stack, node->data);
+        return node;
+    }
+
+    Node_t* result_node = NULL;
+    bool left_tree = true;
+    bool right_tree = false;
+    bool left_or_right_tree_param = left_tree;
+
+
+    if(node->left)
+        result_node = FindObjectInTree(definition_stack, node->left, searching_object);
+    if(result_node == NULL && node->right)
+    {
+        result_node = FindObjectInTree(definition_stack, node->right, searching_object);
+        left_or_right_tree_param = right_tree;
+    }
+    if(result_node != NULL)
+    {
+        if (left_or_right_tree_param == left_tree)
+            StackPush(definition_stack, "l");
+        else
+        {
+            StackPush(definition_stack, "r");
+        }
+    }
+
+    return result_node;
 }

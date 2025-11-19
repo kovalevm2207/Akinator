@@ -190,3 +190,37 @@ void PrintWhichObject(void)
 {
       printf("Введите объект которому хотите дать определение:\n\n\t\t");
 }
+
+
+void PrintNotFoundObject(char* searching_object)
+{
+      printf("Объект %s не найден; Возможные причины:\n"
+             "1) я не знаю такого объекта (проверьте посмотрев древо знаний)\n"
+             "2) вы не верно ввели название объекта\n\n", searching_object);
+}
+
+
+void PrintObjectDefinition(stack_s definition_stack, Node_t* root)
+{
+      size_t words_num = definition_stack.size - 1;
+      const char** buffer = definition_stack.data;
+      Node_t* cur_node = root;
+
+      ON_DEBUG(StackDump(&definition_stack));
+
+      printf("Определение объекта: %s\n\n", buffer[1]);
+      for (size_t i = words_num; i > 1; i--)
+      {
+            if (buffer[i][0] == 'l')
+            {
+                  printf(   "%s; ", cur_node->data);
+                  cur_node = cur_node->left;
+            }
+            else
+            {
+                  printf("не %s; ", cur_node->data);
+                  cur_node = cur_node->right;
+            }
+      }
+      printf("\n\n");
+}
