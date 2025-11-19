@@ -87,9 +87,11 @@ AkinatorErr_t CreateNewNode(Node_t* cur_node);
 FILE* TakeFileName(size_t* file_size, const char* mode);
 char* SkipSpaces(char* ptr);
 
+Node_t* PrintDefinitionBuffer(size_t i, Node_t*  node, const char** buffer);
 AkinatorErr_t Definition(Node_t** root, int* count_img);
 Node_t* FindObjectInTree(stack_s* definition_stack, Node_t* node, char* searching_object);
-char* PreStrcat(const char* dest, const char* src);
+AkinatorErr_t CompareObjects(Node_t** root, int* count_img);
+void ObjectsDefinitionDtor(stack_s* stk, char** obj);
 AkinatorErr_t UpdateTree(Node_t** root, int* count_img);
 AkinatorErr_t Guessing(Node_t** root, int* count_img);
 AkinatorErr_t SayGoodby(Node_t** root, int* count_img);
@@ -103,7 +105,7 @@ Node_t* ReadTreeNode(char** cur_pos);
 const mode_s ModeStructArr[] =
 {
     {DEFINITION,     "определение",             Definition      },
-    {COMPARISON,     "сравнить",                NULL            },
+    {COMPARISON,     "сравнить",                CompareObjects  },
     {UPDATE,         "обновить",                UpdateTree      },
     {GUESSING,       "отгадывание",             Guessing        },
     {END,            "закончить",               SayGoodby       },

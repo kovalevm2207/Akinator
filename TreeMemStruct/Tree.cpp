@@ -6,12 +6,12 @@ Node_t* TreeNodeCtor(Tree_t data, Node_t* left_som, Node_t* right_som)
     if(node == NULL) return NULL;
 
     node->data = data;
-    node->root = NULL;
+    node->prev_node = NULL;
     node->left = left_som;
     node->right = right_som;
 
-    if (left_som)  left_som->root  = &node->left;
-    if (right_som) right_som->root = &node->right;
+    if (left_som)  left_som->prev_node  = &node;
+    if (right_som) right_som->prev_node = &node;
 
     return node;
 }
@@ -23,7 +23,7 @@ TreeErr_t TreeInsertLeft(Node_t* base_node, Node_t* inserting_node)
     if (base_node->left != NULL)  return TREE_ERR_NODE_NOT_EMPTY;
 
     base_node->left = inserting_node;
-    if (inserting_node) inserting_node->root = &base_node->left;  // root = prev_node
+    if (inserting_node) inserting_node->prev_node = &base_node;  // root = prev_node
 
     return TREE_OK;
 }
@@ -35,7 +35,7 @@ TreeErr_t TreeInsertRight(Node_t* base_node, Node_t* inserting_node)
     if (base_node->right != NULL) return TREE_ERR_NODE_NOT_EMPTY;
 
     base_node->right = inserting_node;
-    if (inserting_node) inserting_node->root = &base_node->right;
+    if (inserting_node) inserting_node->prev_node = &base_node;
 
     return TREE_OK;
 }
@@ -78,7 +78,7 @@ TreeErr_t DeleteTreeNode(Node_t** node)
 
     free(cur_node->data);
     cur_node->data = NULL;
-    if (cur_node->root) *(cur_node->root) = NULL;
+    if (cur_node->prev_node) *(cur_node->prev_node) = NULL;
 
     free(cur_node);
     *node = NULL;
@@ -90,7 +90,7 @@ TreeErr_t DeleteTreeNode(Node_t** node)
 TreeErr_t PrintTreeNode(FILE* stream, const Node_t* node, const char* mode)
 {
     typedef enum {
-        PREORDER = 'l' - 'l',
+        PREORDER = 'l' - 'l', // todo make 0, 1, 2
         INORDER = 'm' - 'l',
         POSTORDER = 'r' - 'l'
     } TraverseMode_t;
@@ -111,8 +111,8 @@ TreeErr_t PrintTreeNode(FILE* stream, const Node_t* node, const char* mode)
 
     mode_s modes[('r' - 'l') + 1] = {};
 
-    modes[PREORDER] = {"l", PrintTreeData, PrintLeftTree,  PrintRightTree};
-    modes[INORDER] = {"m", PrintLeftTree, PrintTreeData,  PrintRightTree};
+    modes[PREORDER]  = {"l", PrintTreeData, PrintLeftTree,  PrintRightTree};
+    modes[INORDER]   = {"m", PrintLeftTree, PrintTreeData,  PrintRightTree};
     modes[POSTORDER] = {"r", PrintLeftTree, PrintRightTree, PrintTreeData};
 
     const mode_s* cur_mode = &modes[*mode - 'l'];
@@ -122,6 +122,14 @@ TreeErr_t PrintTreeNode(FILE* stream, const Node_t* node, const char* mode)
     cur_mode->func2(stream, node, cur_mode->mode);
     cur_mode->func3(stream, node, cur_mode->mode);
     fprintf(stream, ")");
+
+
+    // todo refactor
+    // if (mode == PREORDER) {
+        // printtreedata();
+        // printleft();
+        // printright();
+    // }
 
     return TREE_OK;
 }

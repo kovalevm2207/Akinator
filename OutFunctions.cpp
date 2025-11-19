@@ -200,8 +200,27 @@ void PrintNotFoundObject(char* searching_object)
 }
 
 
+Node_t* PrintDefinitionBuffer(size_t i, Node_t*  node, const char** buffer)
+{
+      assert(node);
+      assert(buffer);
+
+      if (buffer[i][0] == 'l')
+      {
+            printf(   "%s; ", node->data);
+            return node->left;
+      }
+      else
+      {
+            printf("не %s; ", node->data);
+            return node->right;
+      }
+}
+
 void PrintObjectDefinition(stack_s definition_stack, Node_t* root)
 {
+      assert(root != NULL);
+
       size_t words_num = definition_stack.size - 1;
       const char** buffer = definition_stack.data;
       Node_t* cur_node = root;
@@ -211,16 +230,80 @@ void PrintObjectDefinition(stack_s definition_stack, Node_t* root)
       printf("Определение объекта: %s\n\n", buffer[1]);
       for (size_t i = words_num; i > 1; i--)
       {
-            if (buffer[i][0] == 'l')
+            cur_node = PrintDefinitionBuffer(i, cur_node, buffer);
+      }
+      printf("\n\n");
+}
+
+
+void PrintDiff(Node_t* root, stack_s first_obj_definition, stack_s second_obj_definition)
+{
+      assert(root != NULL);
+
+      ON_DEBUG(StackDump(&first_obj_definition));
+      ON_DEBUG(StackDump(&second_obj_definition));
+
+      size_t words_num1 = first_obj_definition.size - 1;
+      const char** buffer1 = first_obj_definition.data;
+      Node_t* cur_node1 = root;
+
+      size_t words_num2 = second_obj_definition.size - 1;
+      const char** buffer2 = second_obj_definition.data;
+      Node_t* cur_node2 = root;
+
+      printf("Сравнение сравнение объектов в дереве:\n"
+             "============================================================\n"
+             "Oбъект: %s\t\t\tOбъект: %s\n"
+             "____________________________________________________________\n\n"
+             "Общее:\n", buffer1[1], buffer2[1]);
+
+      size_t last_eq_num = 0;
+      while (buffer2[words_num2 - last_eq_num][0] == buffer1[words_num1 - last_eq_num][0] &&
+                                      last_eq_num <= words_num1                           &&
+                                      last_eq_num <= words_num2)
+      {
+            if (buffer1[words_num2 - last_eq_num++][0] == 'l')
             {
-                  printf(   "%s; ", cur_node->data);
-                  cur_node = cur_node->left;
+                  printf("%s; ", cur_node1->data);
+                  cur_node1 = cur_node1->left;
+                  cur_node2 = cur_node2->left;
             }
             else
             {
-                  printf("не %s; ", cur_node->data);
-                  cur_node = cur_node->right;
+                  printf("не %s; ", cur_node1->data);
+                  cur_node1 = cur_node1->right;
+                  cur_node2 = cur_node2->right;
             }
       }
+
+      printf("\n\nУникаьлные черты объекта %s:\n", buffer1[1]);
+      for (size_t i = words_num1 - last_eq_num; i > 1; i--)
+      {
+            cur_node1 = PrintDefinitionBuffer(i, cur_node1, buffer1);
+      }
+
+      printf("\n\nУникаьлные черты объекта %s:\n", buffer2[1]);
+      for (size_t i = words_num2 - last_eq_num; i > 1; i--)
+      {
+            cur_node2 = PrintDefinitionBuffer(i, cur_node2, buffer2);
+      }
       printf("\n\n");
+}
+
+
+void PrintFirstObjQuestion(void)
+{
+      printf("Введите первый объект для сравнения:\n\n\t\t");
+}
+
+
+void PrintSecondObjQuestion(void)
+{
+      printf("Введите второй объект для сравнения:\n\n\t\t");
+}
+
+
+void PrintTreeEmpty(void)
+{
+      printf("У меня нет никакой информации, чтобы начать сравнивать объекты, пожалуйста введите объекты, загрузив файл, или в режиме [отгадывание]\n\n");
 }

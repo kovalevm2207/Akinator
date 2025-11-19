@@ -331,9 +331,11 @@ Node_t* ReadTreeNode(char** cur_pos)
 
 AkinatorErr_t Definition(Node_t** root, int* count_img)
 {
-    assert(root != NULL);
     assert(count_img != NULL);
+    assert(root != NULL);
     (void) count_img;
+
+    if (*root == NULL) {PrintTreeEmpty(); return AKINATOR_OK;}
 
     size_t start_capacity = 64;
     stack_s definition_stack = {};
@@ -342,9 +344,9 @@ AkinatorErr_t Definition(Node_t** root, int* count_img)
     do
     {
         PrintWhichObject();
-        StackCtor(&definition_stack, start_capacity);
-
         GetUserAns(&UserAns);
+
+        StackCtor(&definition_stack, start_capacity);
 
         if (FindObjectInTree(&definition_stack, *root, UserAns))
         {
@@ -370,7 +372,6 @@ Node_t* FindObjectInTree(stack_s* definition_stack, Node_t* node, char* searchin
 {
     assert(definition_stack != NULL);
     assert(searching_object != NULL);
-    assert(node != NULL);
 
     if(strcmp(searching_object, node->data) == 0)
     {
@@ -402,4 +403,72 @@ Node_t* FindObjectInTree(stack_s* definition_stack, Node_t* node, char* searchin
     }
 
     return result_node;
+}
+
+
+AkinatorErr_t CompareObjects(Node_t** root, int* count_img)
+{
+    assert(count_img != NULL);
+    (void) count_img;
+
+    if (*root == NULL) { PrintTreeEmpty(); return AKINATOR_OK; }
+
+    size_t start_capacity = 64;
+    stack_s first_obj_definition  = {};
+    stack_s second_obj_definition = {};
+    char* first_obj  = NULL;
+    char* second_obj = NULL;
+
+    do
+    {
+        PrintFirstObjQuestion();
+        GetUserAns(&first_obj);
+
+
+        StackCtor(&first_obj_definition,  start_capacity);
+
+        if (FindObjectInTree(&first_obj_definition,  *root, first_obj) == NULL)
+        {
+            PrintNotFoundObject(first_obj);
+            ObjectsDefinitionDtor(&first_obj_definition, &first_obj);
+            PrintContinueQuestion();
+            if(Confirm()) continue;
+            else return AKINATOR_OK;
+        }
+
+        PrintSecondObjQuestion();
+        GetUserAns(&second_obj);
+        StackCtor(&second_obj_definition, start_capacity);
+
+        if(FindObjectInTree(&second_obj_definition, *root, second_obj) == NULL)
+        {
+            PrintNotFoundObject(second_obj);
+
+            ObjectsDefinitionDtor(&first_obj_definition,  &first_obj);
+            ObjectsDefinitionDtor(&second_obj_definition, &second_obj);
+
+            PrintContinueQuestion();
+            if(Confirm()) continue;
+            else return AKINATOR_OK;
+        }
+
+        PrintDiff(*root, first_obj_definition, second_obj_definition);
+
+        ObjectsDefinitionDtor(&first_obj_definition,  &first_obj);
+        ObjectsDefinitionDtor(&second_obj_definition, &second_obj);
+
+        PrintContinueQuestion();
+        if(!Confirm()) return AKINATOR_OK;
+    }
+    while(true);
+
+    return AKINATOR_OK;
+}
+
+
+void ObjectsDefinitionDtor(stack_s* stk, char** obj)
+{
+    free(*obj);
+    *obj = NULL;
+    StackDtor(stk);
 }

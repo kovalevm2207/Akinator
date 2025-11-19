@@ -32,5 +32,9 @@ void PrintReadFromQuestion(void);
 void PrintWhichObject(void);
 void PrintNotFoundObject(char* searching_object);
 void PrintObjectDefinition(stack_s definition_stack, Node_t* root);
+void PrintDiff(Node_t* root, stack_s first_obj_definition, stack_s second_obj_definition);
+void PrintFirstObjQuestion(void);
+void PrintSecondObjQuestion(void);
+void PrintTreeEmpty(void);
 
 #endif
