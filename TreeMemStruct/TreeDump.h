@@ -9,10 +9,6 @@
 
 const int MAX_FILE_NAME = 100;
 
-TreeErr_t PrintLeftTree(FILE* stream, const Node_t* node, const char* mode);
-TreeErr_t PrintRightTree(FILE* stream, const Node_t* node, const char* mode);
-TreeErr_t PrintTreeData(FILE* stream, const Node_t* node, const char* mode);
-
 FILE* StartHTMLfile(void);
 TreeErr_t CreateDotFile(const Node_t* node);
 void MakeNodes(const Node_t* node, int* node_count, FILE* file);

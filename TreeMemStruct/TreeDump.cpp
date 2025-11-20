@@ -1,45 +1,5 @@
 #include "TreeDump.h"
 
-TreeErr_t PrintLeftTree(FILE* stream, const Node_t* node, const char* mode)
-{
-    assert(node != NULL);
-    assert(mode != NULL);
-    assert(*mode == 'l' || *mode == 'r' || *mode == 'm');
-
-    if (node->left) return PrintTreeNode(stream, node->left, mode);
-    else fprintf(stream, "%p", node->left);
-
-    return TREE_OK;
-}
-
-
-TreeErr_t PrintRightTree(FILE* stream, const Node_t* node, const char* mode)
-{
-    assert(node != NULL);
-    assert(mode != NULL);
-    assert(*mode == 'l' || *mode == 'r' || *mode == 'm');
-
-    if (node->right) return PrintTreeNode(stream, node->right, mode);
-    else fprintf(stream, "%p", node->right);
-
-    return TREE_OK;
-}
-
-
-TreeErr_t PrintTreeData(FILE* stream, const Node_t* node, const char* mode)
-{
-    assert(node != NULL);
-    assert(mode != NULL);
-    assert(*mode == 'l' || *mode == 'r' || *mode == 'm');
-
-    (void) mode;
-
-    fprintf(stream, "\"%s\"", node->data);
-
-    return TREE_OK;
-}
-
-
 FILE* StartHTMLfile(void)
 {
     FILE* dump_file = fopen("dump.html", "w");

@@ -12,7 +12,7 @@ typedef char* Tree_t;
 
 typedef struct Node_t
 {
-    Node_t** root;
+    Node_t** prev_node;
     Tree_t data;
     Node_t* left;
     Node_t* right;
@@ -26,8 +26,18 @@ typedef enum
     NULL_FILE               = 1 << 3,
     END_FILE_ERR            = 1 << 4,
     TREE_ERR_DUPLICATE_NODE = 1 << 5,
-    NULL_NODE               = 1 << 6
+    NULL_NODE               = 1 << 6,
+    INVALID_MODE            = 1 << 7
 } TreeErr_t;
+
+
+typedef enum
+{
+    PREORDER  = 0,
+    INORDER   = 1,
+    POSTORDER = 2
+} TraverseMode_t;
+
 
 #ifdef DEBUG
     #define ON_DEBUG(func) func

@@ -202,7 +202,7 @@ AkinatorErr_t WriteTreeInFile(Node_t** root, int* count_img)
     FILE* file = TakeFileName(&file_size, "w");
     if(file == NULL) return OPEN_FILE_ERR;
 
-    PrintTreeNode(file, *root, "l");
+    PrintTreeNode(file, *root, PREORDER);
     fclose(file);
     file = NULL;
 

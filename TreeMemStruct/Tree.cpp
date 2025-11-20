@@ -87,49 +87,37 @@ TreeErr_t DeleteTreeNode(Node_t** node)
 }
 
 
-TreeErr_t PrintTreeNode(FILE* stream, const Node_t* node, const char* mode)
+TreeErr_t PrintTreeNode(FILE* stream, const Node_t* node, TraverseMode_t mode)
 {
-    typedef enum {
-        PREORDER = 'l' - 'l', // todo make 0, 1, 2
-        INORDER = 'm' - 'l',
-        POSTORDER = 'r' - 'l'
-    } TraverseMode_t;
-
-    //if( node == NULL) return NULL_NODE;
-    assert(mode != NULL);
-    assert(*mode == 'l' || *mode == 'r' || *mode == 'm');
-
-    typedef TreeErr_t (* PrintFunc_t)(FILE* stream, const Node_t* node, const char* mode);
-
-    typedef struct
+    assert(mode == PREORDER || mode == INORDER || mode == POSTORDER);
+    if (!node)
     {
-        const char* mode;
-        PrintFunc_t func1;
-        PrintFunc_t func2;
-        PrintFunc_t func3;
-    } mode_s;
-
-    mode_s modes[('r' - 'l') + 1] = {};
-
-    modes[PREORDER]  = {"l", PrintTreeData, PrintLeftTree,  PrintRightTree};
-    modes[INORDER]   = {"m", PrintLeftTree, PrintTreeData,  PrintRightTree};
-    modes[POSTORDER] = {"r", PrintLeftTree, PrintRightTree, PrintTreeData};
-
-    const mode_s* cur_mode = &modes[*mode - 'l'];
+        fprintf(stream, " nil ");
+        return TREE_OK;
+    }
 
     fprintf(stream, "(");
-    cur_mode->func1(stream, node, cur_mode->mode);
-    cur_mode->func2(stream, node, cur_mode->mode);
-    cur_mode->func3(stream, node, cur_mode->mode);
+    switch(mode)
+    {
+        case PREORDER:
+            fprintf      (stream, "\"%s\"", node->data);
+            PrintTreeNode(stream, node->left,  mode);
+            PrintTreeNode(stream, node->right, mode);
+            break;
+        case INORDER:
+            PrintTreeNode(stream, node->left,  mode);
+            fprintf      (stream, "\"%s\"", node->data);
+            PrintTreeNode(stream, node->right, mode);
+            break;
+        case POSTORDER:
+            PrintTreeNode(stream, node->left,  mode);
+            PrintTreeNode(stream, node->right, mode);
+            fprintf      (stream, "\"%s\"", node->data);
+            break;
+        default:
+            return INVALID_MODE;
+    }
     fprintf(stream, ")");
-
-
-    // todo refactor
-    // if (mode == PREORDER) {
-        // printtreedata();
-        // printleft();
-        // printright();
-    // }
 
     return TREE_OK;
 }
