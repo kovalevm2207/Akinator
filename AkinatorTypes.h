@@ -104,14 +104,14 @@ Node_t* ReadTreeNode(char** cur_pos);
 
 const mode_s ModeStructArr[] =
 {
-    {DEFINITION,     "определение",             Definition      },
+    {DEFINITION,     "определить",              Definition      },
     {COMPARISON,     "сравнить",                CompareObjects  },
     {UPDATE,         "обновить",                UpdateTree      },
     {GUESSING,       "отгадывание",             Guessing        },
     {END,            "закончить",               SayGoodby       },
-    {SHOW_TREE,      "показать древо знаний",   ShowTree        },
-    {WRITE_IN_FILE,  "записать знания в файл",  WriteTreeInFile },
-    {READ_FROM_FILE, "загрузить базу данных",   ReadTreeFromFile},
+    {SHOW_TREE,      "просмотр",                ShowTree        },
+    {WRITE_IN_FILE,  "запись",                  WriteTreeInFile },
+    {READ_FROM_FILE, "чтение",                  ReadTreeFromFile},
     {UNKNOWN,        "UNKNOWN_CODE",            NULL            }
 };
 
